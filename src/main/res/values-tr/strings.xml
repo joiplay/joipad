@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cancel">İptal</string>
+    <string name="close">Kapat</string>
+    <string name="close_game_message">Oyunu kapatmak istiyor musunuz?</string>
+    <string name="error">Hata</string>
+    <string name="no">Hayır</string>
+    <string name="ok">Tamam</string>
+    <string name="yes">Evet</string>
+</resources>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="close_game_message">Do you want to close the game?</string>
+    <string name="error">Error</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+</resources>

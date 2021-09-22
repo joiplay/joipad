@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cancel">Отмена</string>
+    <string name="close">Закрыть</string>
+    <string name="close_game_message">Вы хотите закрыть игру?</string>
+    <string name="error">Ошибка</string>
+    <string name="no">Нет</string>
+    <string name="ok">ОК</string>
+    <string name="yes">Да</string>
+</resources>

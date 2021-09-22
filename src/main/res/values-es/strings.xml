@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cancel">Cancelar</string>
+    <string name="close">Cerrar</string>
+    <string name="close_game_message">¿Quieres cerrar el juego?</string>
+    <string name="error">Error</string>
+    <string name="no">No</string>
+    <string name="ok">Aceptar</string>
+    <string name="yes">Sí</string>
+</resources>
