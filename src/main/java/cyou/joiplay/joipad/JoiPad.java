@@ -341,6 +341,7 @@ public class JoiPad {
             for (Map.Entry<Integer, String> entry : row.entrySet()){
                 Button b = new Button(context);
                 b.setText(entry.getValue());
+                b.setTextColor(context.getResources().getColor(android.R.color.white));
                 b.setPadding(0,0,0,0);
                 b.setTextSize(sdpToPx(context,4));
                 b.setBackgroundResource(R.drawable.keyboard_button);
