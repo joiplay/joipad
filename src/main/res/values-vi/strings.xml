@@ -7,4 +7,16 @@
     <string name="no">Không</string>
     <string name="ok">Đồng ý</string>
     <string name="yes">Có</string>
+    <string name="could_not_save_settings">Xin lỗi, không thể lưu cấu hình gamepad.</string>
+    <string name="button_opacity">Độ mờ của nút</string>
+    <string name="button_size">Kích thước nút</string>
+    <string name="left_button">Nút trái</string>
+    <string name="right_button">Nút phải</string>
+    <string name="first_button">Nút đầu tiên</string>
+    <string name="second_button">Nút thứ hai</string>
+    <string name="third_button">Nút thứ ba</string>
+    <string name="fourth_button">Nút thứ tư</string>
+    <string name="fifth_button">Nút thứ năm</string>
+    <string name="sixth_button">Nút thứ sáu</string>
+    <string name="save">Cứu</string>
 </resources>

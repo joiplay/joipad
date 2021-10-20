@@ -3,7 +3,109 @@
     <string name="close">Close</string>
     <string name="close_game_message">Do you want to close the game?</string>
     <string name="error">Error</string>
+    <string name="could_not_save_settings">Sorry, could not save the gamepad configuration.</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
+    <string name="button_opacity">Button Opacity</string>
+    <string name="button_size">Button Size</string>
+    <string name="left_button">Left Button</string>
+    <string name="right_button">Right Button</string>
+    <string name="first_button">First Button</string>
+    <string name="second_button">Second Button</string>
+    <string name="third_button">Third Button</string>
+    <string name="fourth_button">Fourth Button</string>
+    <string name="fifth_button">Fifth Button</string>
+    <string name="sixth_button">Sixth Button</string>
+    <string name="save">Save</string>
+
+    <string-array name="key_array">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+        <item>D</item>
+        <item>E</item>
+        <item>F</item>
+        <item>G</item>
+        <item>H</item>
+        <item>I</item>
+        <item>J</item>
+        <item>K</item>
+        <item>L</item>
+        <item>M</item>
+        <item>N</item>
+        <item>O</item>
+        <item>P</item>
+        <item>Q</item>
+        <item>R</item>
+        <item>S</item>
+        <item>T</item>
+        <item>U</item>
+        <item>V</item>
+        <item>W</item>
+        <item>X</item>
+        <item>Y</item>
+        <item>Z</item>
+        <item>ALT_LEFT</item>
+        <item>ALT_RIGHT</item>
+        <item>SHIFT_LEFT</item>
+        <item>SHIFT_RIGHT</item>
+        <item>TAB</item>
+        <item>SPACE</item>
+        <item>ENTER</item>
+        <item>ESCAPE</item>
+        <item>DEL</item>
+        <item>PAGE_UP</item>
+        <item>PAGE_DOWN</item>
+        <item>CTRL_LEFT</item>
+        <item>CTRL_RIGHT</item>
+        <item>F1</item>
+        <item>F2</item>
+        <item>F3</item>
+        <item>F4</item>
+        <item>F5</item>
+        <item>F6</item>
+        <item>F7</item>
+        <item>F8</item>
+        <item>F9</item>
+        <item>F10</item>
+        <item>F11</item>
+        <item>F12</item>
+    </string-array>
+    <string-array name="opacity_array">
+        <item>0</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+        <item>100</item>
+    </string-array>
+    <string-array name="scale_array">
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+        <item>100</item>
+        <item>110</item>
+        <item>120</item>
+        <item>130</item>
+        <item>140</item>
+        <item>150</item>
+    </string-array>
 </resources>

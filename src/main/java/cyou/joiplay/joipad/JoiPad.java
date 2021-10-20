@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
@@ -24,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +33,9 @@ import java.util.Map;
 
 import cyou.joiplay.commons.model.Game;
 import cyou.joiplay.commons.model.GamePad;
+import cyou.joiplay.commons.parser.GamePadParser;
 import cyou.joiplay.joipad.animation.ButtonAnimations;
+import cyou.joiplay.joipad.dialog.SettingsDialog;
 import cyou.joiplay.joipad.drawable.TextDrawable;
 import cyou.joiplay.joipad.util.KeyboardUtils;
 import cyou.joiplay.joipad.util.ViewUtils;
@@ -39,6 +43,8 @@ import cyou.joiplay.joipad.view.GamePadButton;
 import cyou.joiplay.joipad.view.GamePadDPad;
 
 public class JoiPad {
+    private static final String TAG = "JoiPad";
+
     public interface OnKeyDownListener{
         void onKeyDown(int key);
     }
@@ -67,6 +73,8 @@ public class JoiPad {
     private boolean cheats = false;
     private boolean fastforward = false;
 
+    private int lastScale = 100;
+
     private GamePadButton xBtn;
     private GamePadButton yBtn;
     private GamePadButton zBtn;
@@ -85,8 +93,27 @@ public class JoiPad {
         mKeyMapping = getKeymapping();
     }
 
+    private void loadConfig(){
+        String configPath;
+        if (mGame.folder.startsWith(Environment.getExternalStorageDirectory().getAbsolutePath())){
+            configPath = mGame.folder+"/gamepad.json";
+        } else {
+            configPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/JoiPlay/games/"+mGame.id+"/gamepad.json";
+        }
+        File configFile = new File(configPath);
+
+        if (configFile.exists()){
+            try {
+                GamePadParser.loadFromFile(mGamePad, configFile);
+            } catch (Exception e){
+                Log.d(TAG, Log.getStackTraceString(e));
+            }
+        }
+    }
+
     public void setGame(Game game){
         this.mGame = game;
+        loadConfig();
     }
 
     public void cheats(boolean enabled){
@@ -115,6 +142,7 @@ public class JoiPad {
         ImageButton keyboardButton = layout.findViewById(R.id.keyboardBtn);
         ImageButton fastforwardButton = layout.findViewById(R.id.fastforwardBtn);
         ImageButton cheatsButton = layout.findViewById(R.id.cheatsBtn);
+        ImageButton settingsButton = layout.findViewById(R.id.settingsBtn);
 
         GamePadDPad dPad = layout.findViewById(R.id.dpad);
 
@@ -259,6 +287,65 @@ public class JoiPad {
             }
         });
 
+        settingsButton.setOnClickListener(v -> {
+            SettingsDialog settingsDialog = new SettingsDialog(context, mGamePad, mGame);
+            settingsDialog.setOnSettingsChanged(gamePad -> {
+                if (!mGamePad.btnScale.equals(gamePad.btnScale)){
+                    float scaleFactor = (100f/lastScale)*gamePad.btnScale;
+                    lastScale = gamePad.btnScale;
+                    ViewUtils.resize(gamepadLayout, scaleFactor);
+                }
+
+                if (!mGamePad.btnOpacity.equals(gamePad.btnOpacity)){
+                    ViewUtils.changeOpacity(gamepadLayout, gamePad.btnOpacity);
+                }
+
+                if (!mGamePad.aKeyCode.equals(gamePad.aKeyCode)){
+                    aButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.aKeyCode).replace("KEYCODE_", "")));
+                    aButton.setKey(gamePad.aKeyCode);
+                }
+
+                if (!mGamePad.bKeyCode.equals(gamePad.bKeyCode)){
+                    bButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.bKeyCode).replace("KEYCODE_", "")));
+                    bButton.setKey(gamePad.bKeyCode);
+                }
+
+                if (!mGamePad.cKeyCode.equals(gamePad.cKeyCode)){
+                    cButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.cKeyCode).replace("KEYCODE_", "")));
+                    cButton.setKey(gamePad.cKeyCode);
+                }
+
+                if (!mGamePad.xKeyCode.equals(gamePad.xKeyCode)){
+                    xButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.xKeyCode).replace("KEYCODE_", "")));
+                    xButton.setKey(gamePad.xKeyCode);
+                }
+
+                if (!mGamePad.yKeyCode.equals(gamePad.yKeyCode)){
+                    yButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.yKeyCode).replace("KEYCODE_", "")));
+                    yButton.setKey(gamePad.yKeyCode);
+                }
+
+                if (!mGamePad.zKeyCode.equals(gamePad.zKeyCode)){
+                    zButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.zKeyCode).replace("KEYCODE_", "")));
+                    zButton.setKey(gamePad.zKeyCode);
+                }
+
+                if (!mGamePad.lKeyCode.equals(gamePad.lKeyCode)){
+                    lButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.lKeyCode).replace("KEYCODE_", "")));
+                    lButton.setKey(gamePad.lKeyCode);
+                }
+
+                if (!mGamePad.rKeyCode.equals(gamePad.rKeyCode)){
+                    rButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.rKeyCode).replace("KEYCODE_", "")));
+                    rButton.setKey(gamePad.rKeyCode);
+                }
+
+                mGamePad = gamePad;
+
+            });
+            settingsDialog.show();
+        });
+
         dPad.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
 
         dPad.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
@@ -303,6 +390,7 @@ public class JoiPad {
         rButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
         rButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
 
+        lastScale = mGamePad.btnScale;
         ViewUtils.resize(gamepadLayout, mGamePad.btnScale);
         ViewUtils.changeOpacity(gamepadLayout, mGamePad.btnOpacity);
 

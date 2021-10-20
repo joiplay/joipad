@@ -7,4 +7,16 @@
     <string name="no">No</string>
     <string name="ok">Aceptar</string>
     <string name="yes">Sí</string>
+    <string name="could_not_save_settings">Lo sentimos, no se pudo guardar la configuración del gamepad.</string>
+    <string name="button_opacity">Opacidad del botón</string>
+    <string name="button_size">Tamaño del botón</string>
+    <string name="left_button">Botón izquierdo</string>
+    <string name="right_button">Botón derecho</string>
+    <string name="first_button">Primer botón</string>
+    <string name="second_button">Segundo botón</string>
+    <string name="third_button">Tercer botón</string>
+    <string name="fourth_button">Cuarto botón</string>
+    <string name="fifth_button">Quinto botón</string>
+    <string name="sixth_button">Sexto botón</string>
+    <string name="save">Guardar</string>
 </resources>

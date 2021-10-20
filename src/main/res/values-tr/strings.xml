@@ -7,4 +7,16 @@
     <string name="no">Hayır</string>
     <string name="ok">Tamam</string>
     <string name="yes">Evet</string>
+    <string name="could_not_save_settings">Maalesef gamepad yapılandırması kaydedilemedi.</string>
+    <string name="button_opacity">Buton Opaklığı</string>
+    <string name="button_size">Buton Boyutu</string>
+    <string name="left_button">Sol Buton</string>
+    <string name="right_button">Sağ Buton</string>
+    <string name="first_button">Birinci Buton</string>
+    <string name="second_button">İkinci Buton</string>
+    <string name="third_button">Üçüncü Buton</string>
+    <string name="fourth_button">Dördüncü Buton</string>
+    <string name="fifth_button">Beşinci Buton</string>
+    <string name="sixth_button">Altıncı Buton</string>
+    <string name="save">Kaydet</string>
 </resources>

@@ -79,6 +79,15 @@
                         android:layout_marginEnd="@dimen/_4sdp"
                         android:visibility="gone"
                         tools:ignore="ContentDescription"/>
+                    <ImageButton
+                        android:id="@+id/settingsBtn"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:background="@drawable/action_back_square"
+                        android:src="@drawable/settings"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        tools:ignore="ContentDescription"/>
                 </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>

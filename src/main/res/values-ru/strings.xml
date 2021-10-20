@@ -7,4 +7,16 @@
     <string name="no">Нет</string>
     <string name="ok">ОК</string>
     <string name="yes">Да</string>
+    <string name="could_not_save_settings">К сожалению, не удалось сохранить конфигурацию геймпада.</string>
+    <string name="button_opacity">Непрозрачность кнопки</string>
+    <string name="button_size">Размер кнопки</string>
+    <string name="left_button">Левая кнопка</string>
+    <string name="right_button">Правая кнопка</string>
+    <string name="first_button">Первая кнопка</string>
+    <string name="second_button">Вторая кнопка</string>
+    <string name="third_button">Третья кнопка</string>
+    <string name="fourth_button">Четвертая кнопка</string>
+    <string name="fifth_button">Пятая кнопка</string>
+    <string name="sixth_button">Шестая кнопка</string>
+    <string name="save">Сохранить</string>
 </resources>
