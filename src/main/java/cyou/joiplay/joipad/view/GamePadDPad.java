@@ -9,9 +9,13 @@ import android.widget.ImageView;
 public class GamePadDPad extends ImageView {
     enum Direction{
         UP,
+        UP_RIGHT,
         RIGHT,
+        DOWN_RIGHT,
         DOWN,
+        DOWN_LEFT,
         LEFT,
+        UP_LEFT,
         UNKNOWN
     }
 
@@ -31,6 +35,8 @@ public class GamePadDPad extends ImageView {
     private Direction nAngle = Direction.UNKNOWN;
     private float posX = 0f;
     private float posY = 0f;
+
+    public Boolean isDiagonal = false;
 
 
     public GamePadDPad(Context context) {
@@ -78,8 +84,24 @@ public class GamePadDPad extends ImageView {
                         case UP:
                             mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_UP);
                             break;
+                        case UP_RIGHT:
+                            mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_UP);
+                            mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_RIGHT);
+                            break;
+                        case UP_LEFT:
+                            mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_UP);
+                            mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_LEFT);
+                            break;
                         case DOWN:
                             mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_DOWN);
+                            break;
+                        case DOWN_RIGHT:
+                            mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_DOWN);
+                            mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_RIGHT);
+                            break;
+                        case DOWN_LEFT:
+                            mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_DOWN);
+                            mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_LEFT);
                             break;
                         case RIGHT:
                             mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_RIGHT);
@@ -95,8 +117,24 @@ public class GamePadDPad extends ImageView {
                         case UP:
                             mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_UP);
                             break;
+                        case UP_RIGHT:
+                            mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_UP);
+                            mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_RIGHT);
+                            break;
+                        case UP_LEFT:
+                            mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_UP);
+                            mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_LEFT);
+                            break;
                         case DOWN:
                             mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_DOWN);
+                            break;
+                        case DOWN_RIGHT:
+                            mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_DOWN);
+                            mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_RIGHT);
+                            break;
+                        case DOWN_LEFT:
+                            mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_DOWN);
+                            mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_LEFT);
                             break;
                         case RIGHT:
                             mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_DPAD_RIGHT);
@@ -118,8 +156,24 @@ public class GamePadDPad extends ImageView {
                     case UP:
                         mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_UP);
                         break;
+                    case UP_RIGHT:
+                        mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_UP);
+                        mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_RIGHT);
+                        break;
+                    case UP_LEFT:
+                        mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_UP);
+                        mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_LEFT);
+                        break;
                     case DOWN:
                         mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_DOWN);
+                        break;
+                    case DOWN_RIGHT:
+                        mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_DOWN);
+                        mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_RIGHT);
+                        break;
+                    case DOWN_LEFT:
+                        mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_DOWN);
+                        mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_LEFT);
                         break;
                     case RIGHT:
                         mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_DPAD_RIGHT);
@@ -132,6 +186,14 @@ public class GamePadDPad extends ImageView {
         }
 
         return true;
+    }
+
+    private Direction getDir(double angle) {
+        if (isDiagonal){
+            return get8dir(angle);
+        } else {
+            return get4dir(angle);
+        }
     }
 
     private Direction get4dir(double angle)  {
@@ -148,6 +210,28 @@ public class GamePadDPad extends ImageView {
         }
     }
 
+    private Direction get8dir(double angle)  {
+        if ((angle >= 67.5) && (angle < 113.5)){
+            return Direction.UP;
+        } else if ((angle >= 113.5) && (angle < 158.5)){
+            return Direction.UP_RIGHT;
+        } else if ((angle >= 158.5) && (angle < 203.5)){
+            return Direction.RIGHT;
+        } else if ((angle >= 203.5) && (angle < 248.5)){
+            return Direction.DOWN_RIGHT;
+        } else if ((angle >= 248.5) && (angle < 293.5)){
+            return Direction.DOWN;
+        } else if ((angle >= 293.5) && (angle < 338.5)){
+            return Direction.DOWN_LEFT;
+        } else if (((angle >= 0) && (angle < 23.5)) || ((angle >= 338.5) && (angle <361))){
+            return Direction.LEFT;
+        } else if ((angle >= 23.5) && (angle < 67.5)){
+            return Direction.UP_LEFT;
+        } else {
+            return Direction.UNKNOWN;
+        }
+    }
+
     private Direction getAngle(float initX, float posX, float initY, float posY){
         double angle = 0;
         try{
@@ -157,6 +241,6 @@ public class GamePadDPad extends ImageView {
         if (angle < 0)
             angle += 360;
 
-        return get4dir(angle);
+        return getDir(angle);
     }
 }

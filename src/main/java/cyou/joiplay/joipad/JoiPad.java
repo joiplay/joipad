@@ -348,8 +348,8 @@ public class JoiPad {
         });
 
         dPad.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-
         dPad.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
+        dPad.isDiagonal = mGamePad.diagonalMovement;
 
         xButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.xKeyCode).replace("KEYCODE_", "")));
         xButton.setKey(mGamePad.xKeyCode);
