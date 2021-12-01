@@ -286,8 +286,8 @@
         </RelativeLayout>
         <ImageButton
             android:id="@+id/topShowButton"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_12sdp"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_18sdp"
             android:background="@drawable/hcircle_bottom"
             android:src="@drawable/arrow_down"
             android:scaleType="fitCenter"
@@ -296,8 +296,8 @@
             />
         <ImageButton
             android:id="@+id/bottomShowButton"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_12sdp"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_18sdp"
             android:background="@drawable/hcircle_top"
             android:src="@drawable/arrow_up"
             android:scaleType="fitCenter"
