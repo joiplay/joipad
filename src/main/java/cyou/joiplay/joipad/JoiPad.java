@@ -193,6 +193,7 @@ public class JoiPad {
             case "rpgmmz":
                 isRPGMorRenPy = true;
                 cheatKey = KeyEvent.KEYCODE_1;
+                break;
             case "renpy":
                 cheatKey = KeyEvent.KEYCODE_F8;
                 isRPGMorRenPy = true;
