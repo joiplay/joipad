@@ -69,23 +69,21 @@ public class JoiPad {
     private int screenWidth;
     private int screenHeight;
 
-    private boolean paused = false;
     private boolean cheats = false;
     private boolean fastforward = false;
 
     private int lastScale = 100;
 
-    private GamePadButton xBtn;
-    private GamePadButton yBtn;
-    private GamePadButton zBtn;
-    private GamePadButton aBtn;
-    private GamePadButton bBtn;
-    private GamePadButton cBtn;
-    private GamePadButton lBtn;
-    private GamePadButton rBtn;
+    private GamePadButton xButton;
+    private GamePadButton yButton;
+    private GamePadButton zButton;
+    private GamePadButton aButton;
+    private GamePadButton bButton;
+    private GamePadButton cButton;
+    private GamePadButton lButton;
+    private GamePadButton rButton;
 
     private GamePadDPad dPad;
-
 
     public void init(Activity activity, GamePad gamePad){
         mActivity = activity;
@@ -144,16 +142,17 @@ public class JoiPad {
         ImageButton cheatsButton = layout.findViewById(R.id.cheatsBtn);
         ImageButton settingsButton = layout.findViewById(R.id.settingsBtn);
 
-        GamePadDPad dPad = layout.findViewById(R.id.dpad);
+        dPad = layout.findViewById(R.id.dpad);
 
-        GamePadButton xButton = layout.findViewById(R.id.xButton);
-        GamePadButton yButton = layout.findViewById(R.id.yButton);
-        GamePadButton zButton = layout.findViewById(R.id.zButton);
-        GamePadButton aButton = layout.findViewById(R.id.aButton);
-        GamePadButton bButton = layout.findViewById(R.id.bButton);
-        GamePadButton cButton = layout.findViewById(R.id.cButton);
-        GamePadButton lButton = layout.findViewById(R.id.lButton);
-        GamePadButton rButton = layout.findViewById(R.id.rButton);
+        xButton = layout.findViewById(R.id.xButton);
+        yButton = layout.findViewById(R.id.yButton);
+        zButton = layout.findViewById(R.id.zButton);
+        aButton = layout.findViewById(R.id.aButton);
+        bButton = layout.findViewById(R.id.bButton);
+        cButton = layout.findViewById(R.id.cButton);
+        lButton = layout.findViewById(R.id.lButton);
+        rButton = layout.findViewById(R.id.rButton);
+
 
         topShowButton.setOnClickListener(view -> {
             if (miscLayChild.getVisibility() == View.VISIBLE){
@@ -188,6 +187,7 @@ public class JoiPad {
                 bottomShowButton.setImageResource(R.drawable.arrow_down);
                 isRPGMorRenPy = true;
                 fastforwardUsable = true;
+                cheatKey = KeyEvent.KEYCODE_F6;
                 break;
             case "rpgmmv":
             case "rpgmmz":
@@ -204,8 +204,6 @@ public class JoiPad {
             cheatsButton.setVisibility(View.VISIBLE);
             int finalCheatKey = cheatKey;
             cheatsButton.setOnTouchListener((view, motionEvent) -> {
-                if (paused)
-                    return false;
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         mOnKeyDownListener.onKeyDown(finalCheatKey);
@@ -216,7 +214,7 @@ public class JoiPad {
                         break;
                 }
                 ButtonAnimations.animateTouchOnce(context, cheatsButton);
-                return true;
+                return false;
             });
         }
 
@@ -225,8 +223,6 @@ public class JoiPad {
 
             ColorFilter activeColorFilter = new PorterDuffColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
             fastforwardButton.setOnTouchListener((view, motionEvent) -> {
-                if (paused)
-                    return false;
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_PAGE_UP);
@@ -254,7 +250,10 @@ public class JoiPad {
                     .setTitle(R.string.close)
                     .setMessage(R.string.close_game_message)
                     .setNegativeButton(R.string.no, (dialogInterface, i) -> { })
-                    .setPositiveButton(R.string.yes, (dialogInterface, i) -> mOnCloseListener.onClose())
+                    .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        mOnCloseListener.onClose();
+                    })
                     .create()
                     .show();
         });
@@ -275,6 +274,7 @@ public class JoiPad {
                 case ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT:
                     mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
                     initKeyboard(context, keyboardLayout, Math.max(screenWidth,screenHeight));
+                    break;
             }
         });
 
