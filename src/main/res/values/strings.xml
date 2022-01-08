@@ -11,6 +11,8 @@
     <string name="button_size">Button Size</string>
     <string name="left_button">Left Button</string>
     <string name="right_button">Right Button</string>
+    <string name="cleft_button">Left Mini Button</string>
+    <string name="cright_button">Right Mini Button</string>
     <string name="first_button">First Button</string>
     <string name="second_button">Second Button</string>
     <string name="third_button">Third Button</string>

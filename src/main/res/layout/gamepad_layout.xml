@@ -119,31 +119,62 @@
                         >
                         <cyou.joiplay.joipad.view.GamePadButton
                             android:id="@+id/lButton"
-                            android:layout_width="@dimen/_64sdp"
-                            android:layout_height="@dimen/_32sdp"
+                            android:layout_width="@dimen/_48sdp"
+                            android:layout_height="@dimen/_24sdp"
                             android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             android:layout_alignParentStart="true"
                             android:background="@drawable/action_back_square"
                             android:scaleType="fitCenter"
-                            android:paddingTop="@dimen/_12sdp"
-                            android:paddingBottom="@dimen/_12sdp"
+                            android:paddingTop="@dimen/_6sdp"
+                            android:paddingBottom="@dimen/_6sdp"
                             android:paddingStart="@dimen/_4sdp"
                             android:paddingEnd="@dimen/_4sdp"
                             />
+
+                        <cyou.joiplay.joipad.view.GamePadButton
+                            android:id="@+id/clButton"
+                            android:layout_width="@dimen/_32sdp"
+                            android:layout_height="@dimen/_16sdp"
+                            android:layout_toEndOf="@id/lButton"
+                            android:layout_alignBottom="@id/lButton"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:background="@drawable/action_back_square"
+                            android:scaleType="fitCenter"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:paddingBottom="@dimen/_4sdp"
+                            android:paddingStart="@dimen/_2sdp"
+                            android:paddingEnd="@dimen/_2sdp"
+                            />
+
                         <cyou.joiplay.joipad.view.GamePadButton
                             android:id="@+id/rButton"
-                            android:layout_width="@dimen/_64sdp"
-                            android:layout_height="@dimen/_32sdp"
-                            android:layout_marginStart="@dimen/_8sdp"
+                            android:layout_width="@dimen/_48sdp"
+                            android:layout_height="@dimen/_24sdp"
+                            android:layout_marginStart="@dimen/_4sdp"
                             android:layout_marginEnd="@dimen/_8sdp"
                             android:layout_alignParentEnd="true"
                             android:background="@drawable/action_back_square"
                             android:scaleType="fitCenter"
-                            android:paddingTop="@dimen/_12sdp"
-                            android:paddingBottom="@dimen/_12sdp"
+                            android:paddingTop="@dimen/_6sdp"
+                            android:paddingBottom="@dimen/_6sdp"
                             android:paddingStart="@dimen/_4sdp"
                             android:paddingEnd="@dimen/_4sdp"
+                            />
+
+                        <cyou.joiplay.joipad.view.GamePadButton
+                            android:id="@+id/crButton"
+                            android:layout_width="@dimen/_32sdp"
+                            android:layout_height="@dimen/_16sdp"
+                            android:layout_toStartOf="@id/rButton"
+                            android:layout_alignBottom="@id/rButton"
+                            android:layout_marginEnd="@dimen/_4sdp"
+                            android:background="@drawable/action_back_square"
+                            android:scaleType="fitCenter"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:paddingBottom="@dimen/_4sdp"
+                            android:paddingStart="@dimen/_2sdp"
+                            android:paddingEnd="@dimen/_2sdp"
                             />
                     </RelativeLayout>
                     <cyou.joiplay.joipad.view.GamePadDPad

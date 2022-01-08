@@ -79,6 +79,8 @@ public class JoiPad {
     private GamePadButton cButton;
     private GamePadButton lButton;
     private GamePadButton rButton;
+    private GamePadButton clButton;
+    private GamePadButton crButton;
 
     private GamePadDPad dPad;
 
@@ -148,6 +150,8 @@ public class JoiPad {
         cButton = layout.findViewById(R.id.cButton);
         lButton = layout.findViewById(R.id.lButton);
         rButton = layout.findViewById(R.id.rButton);
+        clButton = layout.findViewById(R.id.clButton);
+        crButton = layout.findViewById(R.id.crButton);
 
 
         topShowButton.setOnClickListener(view -> {
@@ -337,6 +341,16 @@ public class JoiPad {
                     rButton.setKey(gamePad.rKeyCode);
                 }
 
+                if (!mGamePad.clKeyCode.equals(gamePad.clKeyCode)){
+                    clButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.clKeyCode).replace("KEYCODE_", "")));
+                    clButton.setKey(gamePad.clKeyCode);
+                }
+
+                if (!mGamePad.crKeyCode.equals(gamePad.crKeyCode)){
+                    crButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.crKeyCode).replace("KEYCODE_", "")));
+                    crButton.setKey(gamePad.crKeyCode);
+                }
+
                 mGamePad = gamePad;
 
             });
@@ -386,6 +400,16 @@ public class JoiPad {
         rButton.setKey(mGamePad.rKeyCode);
         rButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
         rButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
+
+        clButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.clKeyCode).replace("KEYCODE_", "")));
+        clButton.setKey(mGamePad.clKeyCode);
+        clButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
+        clButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
+
+        crButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.crKeyCode).replace("KEYCODE_", "")));
+        crButton.setKey(mGamePad.crKeyCode);
+        crButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
+        crButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
 
         lastScale = mGamePad.btnScale;
         ViewUtils.resize(gamepadLayout, mGamePad.btnScale);

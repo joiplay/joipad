@@ -19,4 +19,6 @@
     <string name="fifth_button">Nút thứ năm</string>
     <string name="sixth_button">Nút thứ sáu</string>
     <string name="save">Cứu</string>
+    <string name="cleft_button">Nút trái nhỏ</string>
+    <string name="cright_button">Nút mini phải</string>
 </resources>

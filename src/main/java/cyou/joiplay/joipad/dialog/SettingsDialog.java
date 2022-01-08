@@ -32,6 +32,8 @@ public class SettingsDialog{
     private Integer mScale;
     private Integer mLKey;
     private Integer mRKey;
+    private Integer mCLKey;
+    private Integer mCRKey;
     private Integer mXKey;
     private Integer mYKey;
     private Integer mZKey;
@@ -54,6 +56,8 @@ public class SettingsDialog{
         mScale = gamePad.btnScale;
         mLKey = gamePad.lKeyCode;
         mRKey = gamePad.rKeyCode;
+        mCLKey = gamePad.clKeyCode;
+        mCRKey = gamePad.crKeyCode;
         mXKey = gamePad.xKeyCode;
         mYKey = gamePad.yKeyCode;
         mZKey = gamePad.zKeyCode;
@@ -65,7 +69,7 @@ public class SettingsDialog{
     }
 
     void init(){
-        mDialog = new Dialog(mContext, android.R.style.Theme_DeviceDefault_Dialog);
+        mDialog = new Dialog(mContext);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDialog.setCancelable(true);
         mDialog.setContentView(R.layout.settings_layout);
@@ -74,6 +78,8 @@ public class SettingsDialog{
         Spinner sizeSpinner = mDialog.findViewById(R.id.sizeSpinner);
         Spinner leftSpinner = mDialog.findViewById(R.id.leftSpinner);
         Spinner rightSpinner = mDialog.findViewById(R.id.rightSpinner);
+        Spinner cleftSpinner = mDialog.findViewById(R.id.cleftSpinner);
+        Spinner crightSpinner = mDialog.findViewById(R.id.crightSpinner);
         Spinner firstSpinner = mDialog.findViewById(R.id.firstSpinner);
         Spinner secondSpinner = mDialog.findViewById(R.id.secondSpinner);
         Spinner thirdSpinner = mDialog.findViewById(R.id.thirdSpinner);
@@ -86,6 +92,8 @@ public class SettingsDialog{
         ArrayAdapter<CharSequence> sizeAdapter = ArrayAdapter.createFromResource(mContext, R.array.scale_array, R.layout.spinner_item);
         ArrayAdapter<CharSequence> leftAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
         ArrayAdapter<CharSequence> rightAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
+        ArrayAdapter<CharSequence> cleftAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
+        ArrayAdapter<CharSequence> crightAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
         ArrayAdapter<CharSequence> firstAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
         ArrayAdapter<CharSequence> secondAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
         ArrayAdapter<CharSequence> thirdAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
@@ -97,6 +105,8 @@ public class SettingsDialog{
         sizeAdapter.setDropDownViewResource(R.layout.spinner_item);
         leftAdapter.setDropDownViewResource(R.layout.spinner_item);
         rightAdapter.setDropDownViewResource(R.layout.spinner_item);
+        cleftAdapter.setDropDownViewResource(R.layout.spinner_item);
+        crightAdapter.setDropDownViewResource(R.layout.spinner_item);
         firstAdapter.setDropDownViewResource(R.layout.spinner_item);
         secondAdapter.setDropDownViewResource(R.layout.spinner_item);
         thirdAdapter.setDropDownViewResource(R.layout.spinner_item);
@@ -108,6 +118,8 @@ public class SettingsDialog{
         sizeSpinner.setAdapter(sizeAdapter);
         leftSpinner.setAdapter(leftAdapter);
         rightSpinner.setAdapter(rightAdapter);
+        cleftSpinner.setAdapter(leftAdapter);
+        crightSpinner.setAdapter(rightAdapter);
         firstSpinner.setAdapter(firstAdapter);
         secondSpinner.setAdapter(secondAdapter);
         thirdSpinner.setAdapter(thirdAdapter);
@@ -119,6 +131,8 @@ public class SettingsDialog{
         sizeSpinner.setSelection(getPosition(mScale.toString(), sizeAdapter));
         leftSpinner.setSelection(getPosition(getKeyName(mLKey), leftAdapter));
         rightSpinner.setSelection(getPosition(getKeyName(mRKey), rightAdapter));
+        cleftSpinner.setSelection(getPosition(getKeyName(mCLKey), cleftAdapter));
+        crightSpinner.setSelection(getPosition(getKeyName(mCRKey), crightAdapter));
         firstSpinner.setSelection(getPosition(getKeyName(mXKey), firstAdapter));
         secondSpinner.setSelection(getPosition(getKeyName(mYKey), secondAdapter));
         thirdSpinner.setSelection(getPosition(getKeyName(mZKey), thirdAdapter));
@@ -173,6 +187,34 @@ public class SettingsDialog{
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 try {
                     mRKey = getKeyCode((String) parent.getItemAtPosition(position));
+                } catch (Exception e){
+                    Log.d(TAG, Log.getStackTraceString(e));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        cleftSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    mCLKey = getKeyCode((String) parent.getItemAtPosition(position));
+                } catch (Exception e){
+                    Log.d(TAG, Log.getStackTraceString(e));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        crightSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    mCRKey = getKeyCode((String) parent.getItemAtPosition(position));
                 } catch (Exception e){
                     Log.d(TAG, Log.getStackTraceString(e));
                 }
@@ -278,6 +320,8 @@ public class SettingsDialog{
             gamePad.zKeyCode = mZKey;
             gamePad.lKeyCode = mLKey;
             gamePad.rKeyCode = mRKey;
+            gamePad.clKeyCode = mCLKey;
+            gamePad.crKeyCode = mCRKey;
 
             try{
                 String configPath;

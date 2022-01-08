@@ -19,4 +19,6 @@
     <string name="fifth_button">Beşinci Buton</string>
     <string name="sixth_button">Altıncı Buton</string>
     <string name="save">Kaydet</string>
+    <string name="cleft_button">Sol Mini Buton</string>
+    <string name="cright_button">Sağ Mini Buton</string>
 </resources>

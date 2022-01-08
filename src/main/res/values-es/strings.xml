@@ -19,4 +19,6 @@
     <string name="fifth_button">Quinto botón</string>
     <string name="sixth_button">Sexto botón</string>
     <string name="save">Guardar</string>
+    <string name="cleft_button">Mini botón izquierdo</string>
+    <string name="cright_button">Mini botón derecho</string>
 </resources>

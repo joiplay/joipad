@@ -19,4 +19,6 @@
     <string name="fifth_button">Пятая кнопка</string>
     <string name="sixth_button">Шестая кнопка</string>
     <string name="save">Сохранить</string>
+    <string name="cleft_button">Левая мини-кнопка</string>
+    <string name="cright_button">Правая мини-кнопка</string>
 </resources>
