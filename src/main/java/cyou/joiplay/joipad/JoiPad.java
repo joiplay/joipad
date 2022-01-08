@@ -153,6 +153,8 @@ public class JoiPad {
         clButton = layout.findViewById(R.id.clButton);
         crButton = layout.findViewById(R.id.crButton);
 
+        float[] topVector = {0f,0f};
+        topShowButton.setOnTouchListener((v, event) -> ViewUtils.onMoveView(v, event, topVector, ViewUtils.GridMovement.X));
 
         topShowButton.setOnClickListener(view -> {
             if (miscLayChild.getVisibility() == View.VISIBLE){
@@ -163,6 +165,9 @@ public class JoiPad {
                 topShowButton.setImageResource(R.drawable.arrow_up);
             }
         });
+
+        float[] bottomVector = {0f,0f};
+        bottomShowButton.setOnTouchListener((v, event) -> ViewUtils.onMoveView(v, event, bottomVector, ViewUtils.GridMovement.X));
 
         bottomShowButton.setOnClickListener(view -> {
             if (padLayChild.getVisibility() == View.VISIBLE){

@@ -1,6 +1,7 @@
 package cyou.joiplay.joipad.util;
 
 import android.content.Context;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -51,5 +52,46 @@ public class ViewUtils {
         } catch (Exception e){
             return 0;
         }
+    }
+
+    public enum GridMovement{
+        XY,
+        X,
+        Y
+    }
+    static public boolean onMoveView(View view, MotionEvent motionEvent, float[] vector, GridMovement grid){
+        switch (motionEvent.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                vector[0] = view.getX() - motionEvent.getRawX();
+                vector[1] = view.getY() - motionEvent.getRawY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                switch (grid){
+                    case X:
+                        view.animate()
+                                .x(motionEvent.getRawX() + vector[0] - (view.getWidth() / 2f))
+                                .setDuration(0)
+                                .start();
+                        break;
+                    case Y:
+                        view.animate()
+                                .y(motionEvent.getRawY() + vector[1] - (view.getHeight() / 2f))
+                                .setDuration(0)
+                                .start();
+                        break;
+                    case XY:
+                        view.animate()
+                                .x(motionEvent.getRawX() + vector[0] - (view.getWidth() / 2f))
+                                .y(motionEvent.getRawY() + vector[1] - (view.getHeight() / 2f))
+                                .setDuration(0)
+                                .start();
+                        break;
+                }
+                break;
+            default:
+                return false;
+        }
+
+        return false;
     }
 }
