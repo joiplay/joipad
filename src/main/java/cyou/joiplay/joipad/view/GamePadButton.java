@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.widget.ImageButton;
 
 import cyou.joiplay.joipad.R;
+import cyou.joiplay.joipad.animation.ButtonAnimations;
 
 public class GamePadButton extends ImageButton {
     enum Shape{
@@ -70,10 +71,12 @@ public class GamePadButton extends ImageButton {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                ButtonAnimations.animateTouch(getContext(), this, true);
                 mOnKeyDownListener.onKeyDown(mKey);
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
+                ButtonAnimations.animateTouch(getContext(), this, false);
                 mOnKeyUpListener.onKeyUp(mKey);
                 break;
         }
