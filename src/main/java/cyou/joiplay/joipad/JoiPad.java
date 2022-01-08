@@ -26,8 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +62,6 @@ public class JoiPad {
     private GamePad mGamePad = null;
     private Game mGame = null;
     private Activity mActivity = null;
-    private Map<Integer, Integer> mKeyMapping = Collections.emptyMap();
 
     private int screenWidth;
     private int screenHeight;
@@ -88,7 +85,6 @@ public class JoiPad {
     public void init(Activity activity, GamePad gamePad){
         mActivity = activity;
         mGamePad = gamePad;
-        mKeyMapping = getKeymapping();
     }
 
     private void loadConfig(){
@@ -460,39 +456,94 @@ public class JoiPad {
         viewGroup.invalidate();
     }
 
-    public Map<Integer, Integer> getKeymapping(){
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(KeyEvent.KEYCODE_DPAD_UP,KeyEvent.KEYCODE_DPAD_UP);
-        map.put(KeyEvent.KEYCODE_DPAD_RIGHT,KeyEvent.KEYCODE_DPAD_RIGHT);
-        map.put(KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_DOWN);
-        map.put(KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_LEFT);
-        map.put(KeyEvent.KEYCODE_BUTTON_X, mGamePad.xKeyCode);
-        map.put(KeyEvent.KEYCODE_BUTTON_Y, mGamePad.yKeyCode);
-        map.put(KeyEvent.KEYCODE_BUTTON_A, mGamePad.aKeyCode);
-        map.put(KeyEvent.KEYCODE_BUTTON_L1, mGamePad.zKeyCode);
-        map.put(KeyEvent.KEYCODE_BUTTON_B, mGamePad.bKeyCode);
-        map.put(KeyEvent.KEYCODE_BUTTON_R1, mGamePad.cKeyCode);
-        map.put(KeyEvent.KEYCODE_BUTTON_SELECT, mGamePad.lKeyCode);
-        map.put(KeyEvent.KEYCODE_BUTTON_START, mGamePad.rKeyCode);
-        return map;
-    }
     public boolean processGamepadEvent(KeyEvent keyEvent){
-        if (keyEvent.getSource() == InputDevice.SOURCE_UNKNOWN)
+        int sources = keyEvent.getDevice().getSources();
+        if ((( sources & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD) && ((sources & InputDevice.SOURCE_DPAD) != InputDevice.SOURCE_DPAD))
             return false;
 
-        if (!mKeyMapping.containsKey(keyEvent.getKeyCode()))
-            return false;
-
-        Integer keyCode = mKeyMapping.get(keyEvent.getKeyCode());
-        if (keyCode == null){
-            return false;
+        Integer keyCode = keyEvent.getKeyCode();
+        GamePadButton button = null;
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BUTTON_X:
+                keyCode = mGamePad.xKeyCode;
+                button = xButton;
+                break;
+            case KeyEvent.KEYCODE_BUTTON_Y:
+                keyCode = mGamePad.yKeyCode;
+                button = yButton;
+                break;
+            case KeyEvent.KEYCODE_BUTTON_L1:
+                keyCode = mGamePad.zKeyCode;
+                button = zButton;
+                break;
+            case KeyEvent.KEYCODE_BUTTON_A:
+                keyCode = mGamePad.aKeyCode;
+                button = aButton;
+                break;
+            case KeyEvent.KEYCODE_BUTTON_B:
+                keyCode = mGamePad.bKeyCode;
+                button = bButton;
+                break;
+            case KeyEvent.KEYCODE_BUTTON_R1:
+                keyCode = mGamePad.cKeyCode;
+                button = cButton;
+                break;
+            case KeyEvent.KEYCODE_BUTTON_SELECT:
+                keyCode = mGamePad.lKeyCode;
+                button = lButton;
+                break;
+            case KeyEvent.KEYCODE_BUTTON_START:
+                keyCode = mGamePad.rKeyCode;
+                button = rButton;
+                break;
         }
+
         switch (keyEvent.getAction()){
             case MotionEvent.ACTION_DOWN:
+                if (button != null) ButtonAnimations.animateTouch(mActivity, button, true);
                 mOnKeyDownListener.onKeyDown(keyCode);
+                break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                if (button != null) ButtonAnimations.animateTouch(mActivity, button, false);
+                mOnKeyUpListener.onKeyUp(keyCode);
+                break;
+        }
+
+        return true;
+    }
+
+    public boolean processDPadEvent(MotionEvent motionEvent){
+        int sources = motionEvent.getDevice().getSources();
+        if ((( sources & InputDevice.SOURCE_DPAD) != InputDevice.SOURCE_DPAD))
+            return false;
+
+        float xAxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+        float yAxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+
+        Integer keyCode = null;
+
+        if (Float.compare(yAxis, -1.0f) == 0) {
+            keyCode =  KeyEvent.KEYCODE_DPAD_UP;
+        } else if (Float.compare(yAxis, 1.0f) == 0) {
+            keyCode =  KeyEvent.KEYCODE_DPAD_DOWN;
+        } else if (Float.compare(xAxis, -1.0f) == 0) {
+            keyCode =  KeyEvent.KEYCODE_DPAD_LEFT;
+        } else if (Float.compare(xAxis, 1.0f) == 0) {
+            keyCode =  KeyEvent.KEYCODE_DPAD_RIGHT;
+        }
+
+        if (keyCode == null)
+            return false;
+
+        switch (motionEvent.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                mOnKeyDownListener.onKeyDown(keyCode);
+                break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 mOnKeyUpListener.onKeyUp(keyCode);
+                break;
         }
 
         return true;
