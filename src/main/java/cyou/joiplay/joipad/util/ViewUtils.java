@@ -35,6 +35,12 @@ public class ViewUtils {
 
         view.setLayoutParams(lParams);
 
+        int tPadding = Math.round(view.getPaddingTop() * (scale/100f));
+        int bPadding = Math.round(view.getPaddingBottom() * (scale/100f));
+        int lPadding = Math.round(view.getPaddingLeft() * (scale/100f));
+        int rPadding = Math.round(view.getPaddingRight() * (scale/100f));
+        view.setPadding(lPadding, tPadding, rPadding, bPadding);
+
         if (view instanceof ViewGroup){
             for (int i=0; ((ViewGroup) view).getChildCount() > i; i++){
                 View v = ((ViewGroup) view).getChildAt(i);
