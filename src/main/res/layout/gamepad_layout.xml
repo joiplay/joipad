@@ -5,11 +5,13 @@
     android:layoutDirection="ltr"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
     <RelativeLayout
         android:id="@+id/gamepad_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
         <RelativeLayout
             android:id="@+id/miscLay"
             android:layout_width="match_parent"
@@ -32,59 +34,75 @@
                     android:layout_centerInParent="true"
                     android:gravity="center"
                     >
-                    <ImageButton
+                    <cyou.joiplay.joipad.view.GamePadButton
                         android:id="@+id/closeBtn"
                         android:layout_width="@dimen/_24sdp"
                         android:layout_height="@dimen/_24sdp"
-                        android:background="@drawable/action_back_square"
-                        android:src="@drawable/close"
+                        app:gp_variant="gp_action"
+                        app:gp_backgroundDrawable="@drawable/action_back_square"
+                        app:gp_foregroundDrawable="@drawable/close"
                         android:layout_marginStart="@dimen/_4sdp"
                         android:layout_marginEnd="@dimen/_4sdp"
                         tools:ignore="ContentDescription"/>
-                    <ImageButton
+                    <cyou.joiplay.joipad.view.GamePadButton
                         android:id="@+id/rotateBtn"
                         android:layout_width="@dimen/_24sdp"
                         android:layout_height="@dimen/_24sdp"
-                        android:background="@drawable/action_back_square"
-                        android:src="@drawable/rotate"
+                        app:gp_variant="gp_action"
+                        app:gp_backgroundDrawable="@drawable/action_back_square"
+                        app:gp_foregroundDrawable="@drawable/rotate"
                         android:layout_marginStart="@dimen/_4sdp"
                         android:layout_marginEnd="@dimen/_4sdp"
                         tools:ignore="ContentDescription"/>
-                    <ImageButton
+                    <cyou.joiplay.joipad.view.GamePadButton
+                        android:id="@+id/volumeBtn"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        app:gp_variant="gp_action"
+                        app:gp_backgroundDrawable="@drawable/action_back_square"
+                        app:gp_foregroundDrawable="@drawable/sound_on"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        tools:ignore="ContentDescription"/>
+                    <cyou.joiplay.joipad.view.GamePadButton
                         android:id="@+id/keyboardBtn"
                         android:layout_width="@dimen/_24sdp"
                         android:layout_height="@dimen/_24sdp"
-                        android:background="@drawable/action_back_square"
-                        android:src="@drawable/keyboard"
+                        app:gp_variant="gp_action"
+                        app:gp_backgroundDrawable="@drawable/action_back_square"
+                        app:gp_foregroundDrawable="@drawable/keyboard"
                         android:layout_marginStart="@dimen/_4sdp"
                         android:layout_marginEnd="@dimen/_4sdp"
                         tools:ignore="ContentDescription"/>
-                    <ImageButton
+                    <cyou.joiplay.joipad.view.GamePadButton
                         android:id="@+id/fastforwardBtn"
                         android:layout_width="@dimen/_24sdp"
                         android:layout_height="@dimen/_24sdp"
-                        android:background="@drawable/action_back_square"
-                        android:src="@drawable/fastforward"
+                        app:gp_variant="gp_action"
+                        app:gp_backgroundDrawable="@drawable/action_back_square"
+                        app:gp_foregroundDrawable="@drawable/fastforward"
                         android:layout_marginStart="@dimen/_4sdp"
                         android:layout_marginEnd="@dimen/_4sdp"
                         android:visibility="gone"
                         tools:ignore="ContentDescription"/>
-                    <ImageButton
+                    <cyou.joiplay.joipad.view.GamePadButton
                         android:id="@+id/cheatsBtn"
                         android:layout_width="@dimen/_24sdp"
                         android:layout_height="@dimen/_24sdp"
-                        android:background="@drawable/action_back_square"
-                        android:src="@drawable/flare"
+                        app:gp_variant="gp_gamepad"
+                        app:gp_backgroundDrawable="@drawable/action_back_square"
+                        app:gp_foregroundDrawable="@drawable/flare"
                         android:layout_marginStart="@dimen/_4sdp"
                         android:layout_marginEnd="@dimen/_4sdp"
                         android:visibility="gone"
                         tools:ignore="ContentDescription"/>
-                    <ImageButton
+                    <cyou.joiplay.joipad.view.GamePadButton
                         android:id="@+id/settingsBtn"
                         android:layout_width="@dimen/_24sdp"
                         android:layout_height="@dimen/_24sdp"
-                        android:background="@drawable/action_back_square"
-                        android:src="@drawable/settings"
+                        app:gp_variant="gp_action"
+                        app:gp_backgroundDrawable="@drawable/action_back_square"
+                        app:gp_foregroundDrawable="@drawable/settings"
                         android:layout_marginStart="@dimen/_4sdp"
                         android:layout_marginEnd="@dimen/_4sdp"
                         tools:ignore="ContentDescription"/>
@@ -110,7 +128,8 @@
                 <RelativeLayout
                     android:id="@+id/buttonLay"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    >
                     <RelativeLayout
                         android:id="@+id/binaryLay"
                         android:layout_width="match_parent"
@@ -124,12 +143,8 @@
                             android:layout_marginStart="@dimen/_8sdp"
                             android:layout_marginEnd="@dimen/_4sdp"
                             android:layout_alignParentStart="true"
-                            android:background="@drawable/action_back_square"
-                            android:scaleType="fitCenter"
-                            android:paddingTop="@dimen/_6sdp"
-                            android:paddingBottom="@dimen/_6sdp"
-                            android:paddingStart="@dimen/_4sdp"
-                            android:paddingEnd="@dimen/_4sdp"
+                            app:gp_variant="gp_gamepad"
+                            app:gp_backgroundDrawable="@drawable/action_back_square"
                             />
 
                         <cyou.joiplay.joipad.view.GamePadButton
@@ -139,12 +154,8 @@
                             android:layout_toEndOf="@id/lButton"
                             android:layout_alignBottom="@id/lButton"
                             android:layout_marginStart="@dimen/_4sdp"
-                            android:background="@drawable/action_back_square"
-                            android:scaleType="fitCenter"
-                            android:paddingTop="@dimen/_4sdp"
-                            android:paddingBottom="@dimen/_4sdp"
-                            android:paddingStart="@dimen/_2sdp"
-                            android:paddingEnd="@dimen/_2sdp"
+                            app:gp_variant="gp_gamepad"
+                            app:gp_backgroundDrawable="@drawable/action_back_square"
                             />
 
                         <cyou.joiplay.joipad.view.GamePadButton
@@ -154,12 +165,8 @@
                             android:layout_marginStart="@dimen/_4sdp"
                             android:layout_marginEnd="@dimen/_8sdp"
                             android:layout_alignParentEnd="true"
-                            android:background="@drawable/action_back_square"
-                            android:scaleType="fitCenter"
-                            android:paddingTop="@dimen/_6sdp"
-                            android:paddingBottom="@dimen/_6sdp"
-                            android:paddingStart="@dimen/_4sdp"
-                            android:paddingEnd="@dimen/_4sdp"
+                            app:gp_variant="gp_gamepad"
+                            app:gp_backgroundDrawable="@drawable/action_back_square"
                             />
 
                         <cyou.joiplay.joipad.view.GamePadButton
@@ -169,12 +176,8 @@
                             android:layout_toStartOf="@id/rButton"
                             android:layout_alignBottom="@id/rButton"
                             android:layout_marginEnd="@dimen/_4sdp"
-                            android:background="@drawable/action_back_square"
-                            android:scaleType="fitCenter"
-                            android:paddingTop="@dimen/_4sdp"
-                            android:paddingBottom="@dimen/_4sdp"
-                            android:paddingStart="@dimen/_2sdp"
-                            android:paddingEnd="@dimen/_2sdp"
+                            app:gp_variant="gp_gamepad"
+                            app:gp_backgroundDrawable="@drawable/action_back_square"
                             />
                     </RelativeLayout>
                     <cyou.joiplay.joipad.view.GamePadDPad
@@ -184,9 +187,8 @@
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentStart="true"
                         android:layout_margin="@dimen/_20sdp"
-                        android:background="@drawable/dpad_back"
-                        android:src="@drawable/dpad_front"
-                        android:scaleType="fitXY"
+                        app:gp_backgroundDrawable="@drawable/dpad_back"
+                        app:gp_foregroundDrawable="@drawable/dpad_front"
                         android:layout_centerInParent="true"
                         android:clickable="false"
                         android:focusable="false"
@@ -197,7 +199,8 @@
                         android:layout_height="@dimen/_120sdp"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_margin="@dimen/_20sdp">
+                        android:layout_margin="@dimen/_20sdp"
+                        >
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -210,13 +213,10 @@
                                 android:layout_width="@dimen/_36sdp"
                                 android:layout_height="@dimen/_36sdp"
                                 android:layout_marginStart="@dimen/_8sdp"
-                                android:background="@drawable/action_back_circle"
+                                app:gp_variant="gp_gamepad"
+                                app:gp_backgroundDrawable="@drawable/action_back_circle"
                                 android:layout_margin="@dimen/_5sdp"
-                                android:scaleType="fitCenter"
-                                android:paddingTop="@dimen/_12sdp"
-                                android:paddingBottom="@dimen/_12sdp"
-                                android:paddingStart="@dimen/_4sdp"
-                                android:paddingEnd="@dimen/_4sdp"
+                                android:padding="@dimen/_2sdp"
                                 />
 
                             <cyou.joiplay.joipad.view.GamePadButton
@@ -224,48 +224,40 @@
                                 android:layout_width="@dimen/_36sdp"
                                 android:layout_height="@dimen/_36sdp"
                                 android:layout_marginStart="@dimen/_8sdp"
-                                android:background="@drawable/action_back_circle"
+                                app:gp_variant="gp_gamepad"
+                                app:gp_backgroundDrawable="@drawable/action_back_circle"
                                 android:layout_margin="@dimen/_5sdp"
-                                android:scaleType="fitCenter"
-                                android:paddingTop="@dimen/_12sdp"
-                                android:paddingBottom="@dimen/_12sdp"
-                                android:paddingStart="@dimen/_4sdp"
-                                android:paddingEnd="@dimen/_4sdp"
+                                android:padding="@dimen/_2sdp"
                                 />
 
                         </LinearLayout>
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_centerInParent="true">
+                            android:layout_centerInParent="true"
+                            >
                             <cyou.joiplay.joipad.view.GamePadButton
                                 android:id="@+id/yButton"
                                 android:layout_width="@dimen/_36sdp"
                                 android:layout_height="@dimen/_36sdp"
-                                android:background="@drawable/action_back_circle"
+                                app:gp_variant="gp_gamepad"
+                                app:gp_backgroundDrawable="@drawable/action_back_circle"
                                 android:layout_alignParentStart="true"
                                 android:layout_centerVertical="true"
                                 android:layout_margin="@dimen/_5sdp"
-                                android:scaleType="fitCenter"
-                                android:paddingTop="@dimen/_12sdp"
-                                android:paddingBottom="@dimen/_12sdp"
-                                android:paddingStart="@dimen/_4sdp"
-                                android:paddingEnd="@dimen/_4sdp"
+                                android:padding="@dimen/_2sdp"
                                 />
 
                             <cyou.joiplay.joipad.view.GamePadButton
                                 android:id="@+id/bButton"
                                 android:layout_width="@dimen/_36sdp"
                                 android:layout_height="@dimen/_36sdp"
-                                android:background="@drawable/action_back_circle"
+                                app:gp_variant="gp_gamepad"
+                                app:gp_backgroundDrawable="@drawable/action_back_circle"
                                 android:layout_margin="@dimen/_5sdp"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
-                                android:scaleType="fitCenter"
-                                android:paddingTop="@dimen/_12sdp"
-                                android:paddingBottom="@dimen/_12sdp"
-                                android:paddingStart="@dimen/_4sdp"
-                                android:paddingEnd="@dimen/_4sdp"
+                                android:padding="@dimen/_2sdp"
                                 />
                         </RelativeLayout>
                         <LinearLayout
@@ -279,29 +271,34 @@
                                 android:id="@+id/zButton"
                                 android:layout_width="@dimen/_36sdp"
                                 android:layout_height="@dimen/_36sdp"
-                                android:background="@drawable/action_back_circle"
+                                app:gp_variant="gp_gamepad"
+                                app:gp_backgroundDrawable="@drawable/action_back_circle"
                                 android:layout_margin="@dimen/_5sdp"
-                                android:scaleType="fitCenter"
-                                android:paddingTop="@dimen/_12sdp"
-                                android:paddingBottom="@dimen/_12sdp"
-                                android:paddingStart="@dimen/_4sdp"
-                                android:paddingEnd="@dimen/_4sdp"
+                                android:padding="@dimen/_2sdp"
                                 />
                             <cyou.joiplay.joipad.view.GamePadButton
                                 android:id="@+id/cButton"
                                 android:layout_width="@dimen/_36sdp"
                                 android:layout_height="@dimen/_36sdp"
-                                android:background="@drawable/action_back_circle"
+                                app:gp_variant="gp_gamepad"
+                                app:gp_backgroundDrawable="@drawable/action_back_circle"
                                 android:layout_margin="@dimen/_5sdp"
-                                android:scaleType="fitCenter"
-                                android:paddingTop="@dimen/_12sdp"
-                                android:paddingBottom="@dimen/_12sdp"
-                                android:paddingStart="@dimen/_4sdp"
-                                android:paddingEnd="@dimen/_4sdp"
+                                android:padding="@dimen/_2sdp"
                                 />
                         </LinearLayout>
-
                     </RelativeLayout>
+                    <cyou.joiplay.joipad.view.GamePadButton
+                        android:id="@+id/switchButton"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_margin="@dimen/_6sdp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true"
+                        app:gp_variant="gp_action"
+                        app:gp_foregroundDrawable="@drawable/refresh"
+                        app:gp_backgroundDrawable="@drawable/action_back_circle"
+                        android:padding="@dimen/_2sdp"
+                        />
                 </RelativeLayout>
                 <LinearLayout
                     android:id="@+id/keyboardLay"
@@ -315,22 +312,24 @@
                     />
             </RelativeLayout>
         </RelativeLayout>
-        <ImageButton
+        <cyou.joiplay.joipad.view.GamePadButton
             android:id="@+id/topShowButton"
-            android:layout_width="@dimen/_32sdp"
+            android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_18sdp"
-            android:background="@drawable/hcircle_bottom"
-            android:src="@drawable/arrow_down"
+            app:gp_variant="gp_action"
+            app:gp_backgroundDrawable="@drawable/hcircle_bottom"
+            app:gp_foregroundDrawable="@drawable/arrow_down"
             android:scaleType="fitCenter"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
             />
-        <ImageButton
+        <cyou.joiplay.joipad.view.GamePadButton
             android:id="@+id/bottomShowButton"
-            android:layout_width="@dimen/_32sdp"
+            android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_18sdp"
-            android:background="@drawable/hcircle_top"
-            android:src="@drawable/arrow_up"
+            app:gp_variant="gp_action"
+            app:gp_backgroundDrawable="@drawable/hcircle_top"
+            app:gp_foregroundDrawable="@drawable/arrow_up"
             android:scaleType="fitCenter"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"

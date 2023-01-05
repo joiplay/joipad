@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Environment;
@@ -19,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -32,9 +34,11 @@ import java.util.Map;
 import cyou.joiplay.commons.model.Game;
 import cyou.joiplay.commons.model.GamePad;
 import cyou.joiplay.commons.parser.GamePadParser;
+import cyou.joiplay.commons.utils.AutoCloseTimer;
 import cyou.joiplay.joipad.animation.ButtonAnimations;
 import cyou.joiplay.joipad.dialog.SettingsDialog;
 import cyou.joiplay.joipad.drawable.TextDrawable;
+import cyou.joiplay.joipad.util.DirectionUtils;
 import cyou.joiplay.joipad.util.KeyboardUtils;
 import cyou.joiplay.joipad.util.ViewUtils;
 import cyou.joiplay.joipad.view.GamePadButton;
@@ -68,6 +72,8 @@ public class JoiPad {
 
     private boolean cheats = false;
     private boolean fastforward = false;
+    private boolean volumeOn = true;
+    private boolean isKeyboardSpecial = false;
 
     private int lastScale = 100;
 
@@ -83,6 +89,9 @@ public class JoiPad {
     private GamePadButton crButton;
 
     private GamePadDPad dPad;
+    private AutoCloseTimer autoCloseTimer;
+
+    private boolean isAlternativeButtons = false;
 
     public void init(Activity activity, GamePad gamePad){
         mActivity = activity;
@@ -116,8 +125,42 @@ public class JoiPad {
         this.cheats = enabled;
     }
 
+    public void setAutoCloseTimer(AutoCloseTimer autoCloseTimer){
+        this.autoCloseTimer = autoCloseTimer;
+    }
+
+    private void rescheduleAutoCloseTimer(){
+        if (autoCloseTimer != null) autoCloseTimer.reschedule();
+    }
+
+    private void setGamePadButtonKey(GamePadButton gamePadButton, Integer[] keyCodes, boolean isAlternative){
+        int keyCode = isAlternative ? keyCodes[1] : keyCodes[0];
+        gamePadButton.setForegroundText(KeyEvent.keyCodeToString(keyCode).replace("KEYCODE_", ""));
+        gamePadButton.setKey(keyCode);
+        gamePadButton.setOnKeyDownListener(key -> {
+            if (autoCloseTimer != null) autoCloseTimer.reschedule();
+            mOnKeyDownListener.onKeyDown(key);
+        });
+        gamePadButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
+    }
+
+    private void initGamePadButtons(boolean isAlternative){
+        setGamePadButtonKey(xButton, mGamePad.xKeyCode, isAlternative);
+        setGamePadButtonKey(yButton, mGamePad.yKeyCode, isAlternative);
+        setGamePadButtonKey(zButton, mGamePad.zKeyCode, isAlternative);
+        setGamePadButtonKey(aButton, mGamePad.aKeyCode, isAlternative);
+        setGamePadButtonKey(bButton, mGamePad.bKeyCode, isAlternative);
+        setGamePadButtonKey(cButton, mGamePad.cKeyCode, isAlternative);
+        setGamePadButtonKey(lButton, mGamePad.lKeyCode, isAlternative);
+        setGamePadButtonKey(rButton, mGamePad.rKeyCode, isAlternative);
+        setGamePadButtonKey(clButton, mGamePad.clKeyCode, isAlternative);
+        setGamePadButtonKey(crButton, mGamePad.crKeyCode, isAlternative);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     public void attachTo(Context context, ViewGroup viewGroup){
+        if(mGamePad.hideGamepad) return;
+
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ViewGroup layout = (ViewGroup) inflater.inflate(R.layout.gamepad_layout,viewGroup);
 
@@ -130,15 +173,17 @@ public class JoiPad {
         RelativeLayout buttonLayout = layout.findViewById(R.id.buttonLay);
         LinearLayout keyboardLayout = layout.findViewById(R.id.keyboardLay);
 
-        ImageButton topShowButton = layout.findViewById(R.id.topShowButton);
-        ImageButton bottomShowButton = layout.findViewById(R.id.bottomShowButton);
+        GamePadButton topShowButton = layout.findViewById(R.id.topShowButton);
+        GamePadButton bottomShowButton = layout.findViewById(R.id.bottomShowButton);
 
-        ImageButton closeButton = layout.findViewById(R.id.closeBtn);
-        ImageButton rotateButton = layout.findViewById(R.id.rotateBtn);
-        ImageButton keyboardButton = layout.findViewById(R.id.keyboardBtn);
-        ImageButton fastforwardButton = layout.findViewById(R.id.fastforwardBtn);
-        ImageButton cheatsButton = layout.findViewById(R.id.cheatsBtn);
-        ImageButton settingsButton = layout.findViewById(R.id.settingsBtn);
+        GamePadButton closeButton = layout.findViewById(R.id.closeBtn);
+        GamePadButton rotateButton = layout.findViewById(R.id.rotateBtn);
+        GamePadButton volumeButton = layout.findViewById(R.id.volumeBtn);
+        GamePadButton keyboardButton = layout.findViewById(R.id.keyboardBtn);
+        GamePadButton fastforwardButton = layout.findViewById(R.id.fastforwardBtn);
+        GamePadButton cheatsButton = layout.findViewById(R.id.cheatsBtn);
+        GamePadButton settingsButton = layout.findViewById(R.id.settingsBtn);
+        GamePadButton switchButton = layout.findViewById(R.id.switchButton);
 
         dPad = layout.findViewById(R.id.dpad);
 
@@ -153,35 +198,52 @@ public class JoiPad {
         clButton = layout.findViewById(R.id.clButton);
         crButton = layout.findViewById(R.id.crButton);
 
-        float[] topVector = {0f,0f};
-        topShowButton.setOnTouchListener((v, event) -> ViewUtils.onMoveView(v, event, topVector, ViewUtils.GridMovement.X));
+        gamepadLayout.setOnTouchListener((view, motionEvent) -> {
+            rescheduleAutoCloseTimer();
+            return false;
+        });
+
+        int slope = ViewConfiguration.get(context).getScaledTouchSlop();
+
+        ViewUtils.MovementData topMovementData = new ViewUtils.MovementData();
+        topShowButton.setOnTouchListener((v, event) -> ViewUtils.onMoveView(v, event, topMovementData, ViewUtils.GridMovement.X, slope));
 
         topShowButton.setOnClickListener(view -> {
+            if (autoCloseTimer != null) autoCloseTimer.reschedule();
             if (miscLayChild.getVisibility() == View.VISIBLE){
                 miscLayChild.setVisibility(View.INVISIBLE);
-                topShowButton.setImageResource(R.drawable.arrow_down);
+                topShowButton.setForegroundDrawableResource(R.drawable.arrow_down);
             } else {
                 miscLayChild.setVisibility(View.VISIBLE);
-                topShowButton.setImageResource(R.drawable.arrow_up);
+                topShowButton.setForegroundDrawableResource(R.drawable.arrow_up);
             }
         });
 
-        float[] bottomVector = {0f,0f};
-        bottomShowButton.setOnTouchListener((v, event) -> ViewUtils.onMoveView(v, event, bottomVector, ViewUtils.GridMovement.X));
+        ViewUtils.MovementData bottomMovementData = new ViewUtils.MovementData();
+        bottomShowButton.setOnTouchListener((v, event) -> ViewUtils.onMoveView(v, event, bottomMovementData, ViewUtils.GridMovement.X, slope));
 
         bottomShowButton.setOnClickListener(view -> {
+            if (autoCloseTimer != null) autoCloseTimer.reschedule();
             if (padLayChild.getVisibility() == View.VISIBLE){
                 padLayChild.setVisibility(View.INVISIBLE);
-                bottomShowButton.setImageResource(R.drawable.arrow_up);
+                bottomShowButton.setForegroundDrawableResource(R.drawable.arrow_up);
             } else {
                 padLayChild.setVisibility(View.VISIBLE);
-                bottomShowButton.setImageResource(R.drawable.arrow_down);
+                bottomShowButton.setForegroundDrawableResource(R.drawable.arrow_down);
             }
+        });
+
+        switchButton.setOnClickListener(view -> {
+            if (autoCloseTimer != null) autoCloseTimer.reschedule();
+            ButtonAnimations.animateTouchOnce(context, switchButton);
+
+            isAlternativeButtons = !isAlternativeButtons;
+            initGamePadButtons(isAlternativeButtons);
         });
 
         boolean isRPGMorRenPy = false;
         boolean fastforwardUsable = false;
-        int cheatKey = KeyEvent.KEYCODE_F6;
+        int cheatKey = KeyEvent.KEYCODE_MOVE_HOME;
 
         switch (mGame.type){
             case "rpgmxp":
@@ -189,52 +251,40 @@ public class JoiPad {
             case "rpgmvxace":
             case "mkxp-z":
                 padLayChild.setVisibility(View.VISIBLE);
-                bottomShowButton.setImageResource(R.drawable.arrow_down);
+                bottomShowButton.setForegroundDrawableResource(R.drawable.arrow_down);
                 isRPGMorRenPy = true;
                 fastforwardUsable = true;
-                cheatKey = KeyEvent.KEYCODE_F6;
                 break;
             case "rpgmmv":
             case "rpgmmz":
-                isRPGMorRenPy = true;
-                cheatKey = KeyEvent.KEYCODE_1;
-                break;
             case "renpy":
-                cheatKey = KeyEvent.KEYCODE_F8;
                 isRPGMorRenPy = true;
                 break;
         }
 
         if (isRPGMorRenPy && cheats){
             cheatsButton.setVisibility(View.VISIBLE);
-            int finalCheatKey = cheatKey;
-            cheatsButton.setOnTouchListener((view, motionEvent) -> {
-                switch (motionEvent.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        mOnKeyDownListener.onKeyDown(finalCheatKey);
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                    case MotionEvent.ACTION_UP:
-                        mOnKeyUpListener.onKeyUp(finalCheatKey);
-                        break;
-                }
-                ButtonAnimations.animateTouchOnce(context, cheatsButton);
-                return false;
+            cheatsButton.setKey(cheatKey);
+            cheatsButton.setOnKeyDownListener(key -> {
+                if (autoCloseTimer != null) autoCloseTimer.reschedule();
+                mOnKeyDownListener.onKeyDown(key);
             });
+            cheatsButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
         }
 
         if (fastforwardUsable){
             fastforwardButton.setVisibility(View.VISIBLE);
 
-            ColorFilter activeColorFilter = new PorterDuffColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+            ColorFilter activeColorFilter = new LightingColorFilter(Color.GREEN, Color.TRANSPARENT);
             fastforwardButton.setOnTouchListener((view, motionEvent) -> {
+                if (autoCloseTimer != null) autoCloseTimer.reschedule();
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_PAGE_UP);
                         if (fastforward){
-                            fastforwardButton.getDrawable().setColorFilter(null);
+                            fastforwardButton.clearColorFilter();
                         } else {
-                            fastforwardButton.getDrawable().setColorFilter(activeColorFilter);
+                            fastforwardButton.setColorFilter(activeColorFilter);
                         }
                         fastforwardButton.invalidate();
                         fastforward = !fastforward;
@@ -250,6 +300,8 @@ public class JoiPad {
         }
 
         closeButton.setOnClickListener(view -> {
+            if (autoCloseTimer != null) autoCloseTimer.reschedule();
+
             ButtonAnimations.animateTouchOnce(context, closeButton);
             new AlertDialog.Builder(context)
                     .setTitle(R.string.close)
@@ -264,6 +316,8 @@ public class JoiPad {
         });
 
         rotateButton.setOnClickListener(view -> {
+            if (autoCloseTimer != null) autoCloseTimer.reschedule();
+
             ButtonAnimations.animateTouchOnce(context, rotateButton);
             switch (mActivity.getRequestedOrientation()){
                 case ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE:
@@ -271,19 +325,34 @@ public class JoiPad {
                 case ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE:
                 case ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE:
                     mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-                    initKeyboard(context, keyboardLayout, Math.min(screenWidth,screenHeight));
+                    initKeyboard(context, keyboardLayout, Math.min(screenWidth,screenHeight), isKeyboardSpecial);
                     break;
                 case ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT:
                 case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:
                 case ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT:
                 case ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT:
                     mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-                    initKeyboard(context, keyboardLayout, Math.max(screenWidth,screenHeight));
+                    initKeyboard(context, keyboardLayout, Math.max(screenWidth,screenHeight), isKeyboardSpecial);
                     break;
             }
         });
 
+        volumeButton.setOnClickListener(view -> {
+            volumeOn = !volumeOn;
+
+            if (volumeOn){
+                volumeButton.setForegroundDrawableResource(R.drawable.sound_on);
+            } else {
+                volumeButton.setForegroundDrawableResource(R.drawable.sound_off);
+            }
+
+            mOnKeyDownListener.onKeyDown(KeyEvent.KEYCODE_MUTE);
+            mOnKeyUpListener.onKeyUp(KeyEvent.KEYCODE_MUTE);
+        });
+
         keyboardButton.setOnClickListener(view -> {
+            if (autoCloseTimer != null) autoCloseTimer.reschedule();
+
             if (keyboardLayout.getVisibility() == View.VISIBLE){
                 keyboardLayout.setVisibility(View.INVISIBLE);
                 buttonLayout.setVisibility(View.VISIBLE);
@@ -294,6 +363,8 @@ public class JoiPad {
         });
 
         settingsButton.setOnClickListener(v -> {
+            if (autoCloseTimer != null) autoCloseTimer.reschedule();
+
             SettingsDialog settingsDialog = new SettingsDialog(context, mGamePad, mGame);
             settingsDialog.setOnSettingsChanged(gamePad -> {
                 if (!mGamePad.btnScale.equals(gamePad.btnScale)){
@@ -306,115 +377,21 @@ public class JoiPad {
                     ViewUtils.changeOpacity(gamepadLayout, gamePad.btnOpacity);
                 }
 
-                if (!mGamePad.aKeyCode.equals(gamePad.aKeyCode)){
-                    aButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.aKeyCode).replace("KEYCODE_", "")));
-                    aButton.setKey(gamePad.aKeyCode);
-                }
-
-                if (!mGamePad.bKeyCode.equals(gamePad.bKeyCode)){
-                    bButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.bKeyCode).replace("KEYCODE_", "")));
-                    bButton.setKey(gamePad.bKeyCode);
-                }
-
-                if (!mGamePad.cKeyCode.equals(gamePad.cKeyCode)){
-                    cButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.cKeyCode).replace("KEYCODE_", "")));
-                    cButton.setKey(gamePad.cKeyCode);
-                }
-
-                if (!mGamePad.xKeyCode.equals(gamePad.xKeyCode)){
-                    xButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.xKeyCode).replace("KEYCODE_", "")));
-                    xButton.setKey(gamePad.xKeyCode);
-                }
-
-                if (!mGamePad.yKeyCode.equals(gamePad.yKeyCode)){
-                    yButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.yKeyCode).replace("KEYCODE_", "")));
-                    yButton.setKey(gamePad.yKeyCode);
-                }
-
-                if (!mGamePad.zKeyCode.equals(gamePad.zKeyCode)){
-                    zButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.zKeyCode).replace("KEYCODE_", "")));
-                    zButton.setKey(gamePad.zKeyCode);
-                }
-
-                if (!mGamePad.lKeyCode.equals(gamePad.lKeyCode)){
-                    lButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.lKeyCode).replace("KEYCODE_", "")));
-                    lButton.setKey(gamePad.lKeyCode);
-                }
-
-                if (!mGamePad.rKeyCode.equals(gamePad.rKeyCode)){
-                    rButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.rKeyCode).replace("KEYCODE_", "")));
-                    rButton.setKey(gamePad.rKeyCode);
-                }
-
-                if (!mGamePad.clKeyCode.equals(gamePad.clKeyCode)){
-                    clButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.clKeyCode).replace("KEYCODE_", "")));
-                    clButton.setKey(gamePad.clKeyCode);
-                }
-
-                if (!mGamePad.crKeyCode.equals(gamePad.crKeyCode)){
-                    crButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(gamePad.crKeyCode).replace("KEYCODE_", "")));
-                    crButton.setKey(gamePad.crKeyCode);
-                }
-
                 mGamePad = gamePad;
 
+                initGamePadButtons(isAlternativeButtons);
             });
             settingsDialog.show();
         });
 
-        dPad.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
+        dPad.setOnKeyDownListener(key -> {
+            if (autoCloseTimer != null) autoCloseTimer.reschedule();
+            mOnKeyDownListener.onKeyDown(key);
+        });
         dPad.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
         dPad.isDiagonal = mGamePad.diagonalMovement;
 
-        xButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.xKeyCode).replace("KEYCODE_", "")));
-        xButton.setKey(mGamePad.xKeyCode);
-        xButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-        xButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
-
-        yButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.yKeyCode).replace("KEYCODE_", "")));
-        yButton.setKey(mGamePad.yKeyCode);
-        yButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-        yButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
-
-        zButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.zKeyCode).replace("KEYCODE_", "")));
-        zButton.setKey(mGamePad.zKeyCode);
-        zButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-        zButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
-
-        aButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.aKeyCode).replace("KEYCODE_", "")));
-        aButton.setKey(mGamePad.aKeyCode);
-        aButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-        aButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
-
-        bButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.bKeyCode).replace("KEYCODE_", "")));
-        bButton.setKey(mGamePad.bKeyCode);
-        bButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-        bButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
-
-        cButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.cKeyCode).replace("KEYCODE_", "")));
-        cButton.setKey(mGamePad.cKeyCode);
-        cButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-        cButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
-
-        lButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.lKeyCode).replace("KEYCODE_", "")));
-        lButton.setKey(mGamePad.lKeyCode);
-        lButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-        lButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
-
-        rButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.rKeyCode).replace("KEYCODE_", "")));
-        rButton.setKey(mGamePad.rKeyCode);
-        rButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-        rButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
-
-        clButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.clKeyCode).replace("KEYCODE_", "")));
-        clButton.setKey(mGamePad.clKeyCode);
-        clButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-        clButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
-
-        crButton.setImageDrawable(new TextDrawable(context.getResources(),KeyEvent.keyCodeToString(mGamePad.crKeyCode).replace("KEYCODE_", "")));
-        crButton.setKey(mGamePad.crKeyCode);
-        crButton.setOnKeyDownListener(key -> mOnKeyDownListener.onKeyDown(key));
-        crButton.setOnKeyUpListener(key -> mOnKeyUpListener.onKeyUp(key));
+        initGamePadButtons(isAlternativeButtons);
 
         lastScale = mGamePad.btnScale;
         ViewUtils.resize(gamepadLayout, mGamePad.btnScale);
@@ -425,15 +402,16 @@ public class JoiPad {
         bottomShowButton.bringToFront();
         bottomShowButton.invalidate();
 
-        initKeyboard(context, keyboardLayout, screenWidth);
+        initKeyboard(context, keyboardLayout, screenWidth, isKeyboardSpecial);
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void initKeyboard(Context context, LinearLayout viewGroup, int width){
+    private void initKeyboard(Context context, LinearLayout viewGroup, int width, boolean special){
+        isKeyboardSpecial = special;
         viewGroup.removeAllViews();
         viewGroup.invalidate();
 
-        List<Map<Integer,String>> keyboardLayout = KeyboardUtils.getKeyboardLayout();
+        List<Map<Integer,String>> keyboardLayout = special ? KeyboardUtils.getKeyboardLayoutSpecial() : KeyboardUtils.getKeyboardLayout();
 
         for(Map<Integer,String> row : keyboardLayout){
             LinearLayout rowLayout = new LinearLayout(context);
@@ -446,8 +424,8 @@ public class JoiPad {
             int additionalWidth;
             int btnWidth = 0;
 
-            for (String key : row.values()) {
-                btnWidth += key.length() * sdpToPx(context, 32) + sdpToPx(context, 2);
+            for (Map.Entry<Integer, String> entry : row.entrySet()) {
+                btnWidth += ((entry.getKey() == KeyEvent.KEYCODE_SWITCH_CHARSET) ? 1 : entry.getValue().length()) * sdpToPx(context, 32) + sdpToPx(context, 2);
             }
 
             additionalWidth = (width - btnWidth)/(row.size());
@@ -457,25 +435,33 @@ public class JoiPad {
                 b.setText(entry.getValue());
                 b.setTextColor(context.getResources().getColor(android.R.color.white));
                 b.setPadding(0,0,0,0);
-                b.setTextSize(sdpToPx(context,4));
+                b.setTextSize(sdpToPx(context,5));
                 b.setBackgroundResource(R.drawable.keyboard_button);
-                b.setOnTouchListener((view, motionEvent) -> {
-                    switch (motionEvent.getAction()){
-                        case MotionEvent.ACTION_DOWN:
-                            mOnKeyDownListener.onKeyDown(entry.getKey());
-                            break;
-                        case MotionEvent.ACTION_CANCEL:
-                        case MotionEvent.ACTION_UP:
-                            mOnKeyUpListener.onKeyUp(entry.getKey());
-                            break;
-                    }
-                    ButtonAnimations.animateTouchOnce(context, b);
-                    return true;
-                });
+
+                if (entry.getKey() == KeyEvent.KEYCODE_SWITCH_CHARSET){
+                    b.setOnClickListener((view) -> {
+                        initKeyboard(context, viewGroup, width, !special);
+                    });
+                } else {
+                    b.setOnTouchListener((view, motionEvent) -> {
+                        rescheduleAutoCloseTimer();
+                        switch (motionEvent.getAction()){
+                            case MotionEvent.ACTION_DOWN:
+                                mOnKeyDownListener.onKeyDown(entry.getKey());
+                                break;
+                            case MotionEvent.ACTION_CANCEL:
+                            case MotionEvent.ACTION_UP:
+                                mOnKeyUpListener.onKeyUp(entry.getKey());
+                                break;
+                        }
+                        ButtonAnimations.animateTouchOnce(context, b);
+                        return true;
+                    });
+                }
 
                 LinearLayout.LayoutParams bParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
                 bParams.setMargins(sdpToPx(context, 1),sdpToPx(context, 1),sdpToPx(context, 1),sdpToPx(context,1));
-                bParams.width = entry.getValue().length() * sdpToPx(context, 32) + additionalWidth;
+                bParams.width = ((entry.getKey() == KeyEvent.KEYCODE_SWITCH_CHARSET) ? 1 : entry.getValue().length()) * sdpToPx(context, 32) + additionalWidth;
                 bParams.height = sdpToPx(context, 24);
                 b.setLayoutParams(bParams);
                 rowLayout.addView(b);
@@ -486,6 +472,7 @@ public class JoiPad {
     }
 
     public boolean processGamepadEvent(KeyEvent keyEvent){
+        if (autoCloseTimer != null) autoCloseTimer.reschedule();
         int sources = keyEvent.getDevice().getSources();
         if ((( sources & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD) && ((sources & InputDevice.SOURCE_DPAD) != InputDevice.SOURCE_DPAD))
             return false;
@@ -494,35 +481,35 @@ public class JoiPad {
         GamePadButton button = null;
         switch (keyCode){
             case KeyEvent.KEYCODE_BUTTON_X:
-                keyCode = mGamePad.xKeyCode;
+                keyCode = isAlternativeButtons ? mGamePad.xKeyCode[1] : mGamePad.xKeyCode[0];
                 button = xButton;
                 break;
             case KeyEvent.KEYCODE_BUTTON_Y:
-                keyCode = mGamePad.yKeyCode;
+                keyCode = isAlternativeButtons ? mGamePad.yKeyCode[1] : mGamePad.yKeyCode[0];
                 button = yButton;
                 break;
             case KeyEvent.KEYCODE_BUTTON_L1:
-                keyCode = mGamePad.zKeyCode;
+                keyCode = isAlternativeButtons ? mGamePad.zKeyCode[1] : mGamePad.zKeyCode[0];
                 button = zButton;
                 break;
             case KeyEvent.KEYCODE_BUTTON_A:
-                keyCode = mGamePad.aKeyCode;
+                keyCode = isAlternativeButtons ? mGamePad.aKeyCode[1] : mGamePad.aKeyCode[0];
                 button = aButton;
                 break;
             case KeyEvent.KEYCODE_BUTTON_B:
-                keyCode = mGamePad.bKeyCode;
+                keyCode = isAlternativeButtons ? mGamePad.bKeyCode[1] : mGamePad.bKeyCode[0];
                 button = bButton;
                 break;
             case KeyEvent.KEYCODE_BUTTON_R1:
-                keyCode = mGamePad.cKeyCode;
+                keyCode = isAlternativeButtons ? mGamePad.cKeyCode[1] : mGamePad.cKeyCode[0];
                 button = cButton;
                 break;
             case KeyEvent.KEYCODE_BUTTON_SELECT:
-                keyCode = mGamePad.lKeyCode;
+                keyCode = isAlternativeButtons ? mGamePad.lKeyCode[1] : mGamePad.lKeyCode[0];
                 button = lButton;
                 break;
             case KeyEvent.KEYCODE_BUTTON_START:
-                keyCode = mGamePad.rKeyCode;
+                keyCode = isAlternativeButtons ? mGamePad.rKeyCode[1] : mGamePad.rKeyCode[0];
                 button = rButton;
                 break;
         }
@@ -543,6 +530,7 @@ public class JoiPad {
     }
 
     public boolean processDPadEvent(MotionEvent motionEvent){
+        if (autoCloseTimer != null) autoCloseTimer.reschedule();
         int sources = motionEvent.getDevice().getSources();
         if ((( sources & InputDevice.SOURCE_DPAD) != InputDevice.SOURCE_DPAD))
             return false;
@@ -576,6 +564,97 @@ public class JoiPad {
         }
 
         return true;
+    }
+
+    private float centeredAxis(MotionEvent event, int axis){
+        InputDevice.MotionRange motionRange = event.getDevice().getMotionRange(axis, event.getSource());
+
+        if (motionRange == null)
+            return 0;
+
+        float flat = motionRange.getFlat();
+        float value = event.getAxisValue(axis);;
+
+        if (Math.abs(value) > flat){
+            return value;
+        } else {
+            return 0;
+        }
+    }
+
+    private float getJoystickX(MotionEvent event){
+        float x = centeredAxis(event, MotionEvent.AXIS_X);
+
+        if (x == 0)
+            x = centeredAxis(event, MotionEvent.AXIS_HAT_X);
+
+        if (x == 0)
+            x = centeredAxis(event, MotionEvent.AXIS_Z);
+
+        return x;
+    }
+
+    private float getJoystickY(MotionEvent event){
+        float y = centeredAxis(event, MotionEvent.AXIS_Y);
+
+        if (y == 0)
+            y = centeredAxis(event, MotionEvent.AXIS_HAT_Y);
+
+        if (y == 0)
+            y = centeredAxis(event, MotionEvent.AXIS_RZ);
+
+        return y;
+    }
+
+    private boolean applyJoystickMovement(int action, float x, float y){
+        DirectionUtils.Direction direction = DirectionUtils.getDir(x, y, false);
+
+        Integer keyCode = null;
+
+        switch (direction){
+            case UP:
+                keyCode = KeyEvent.KEYCODE_DPAD_UP;
+                break;
+            case RIGHT:
+                keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
+                break;
+            case DOWN:
+                keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
+                break;
+            case LEFT:
+                keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
+                break;
+        }
+
+        if (keyCode == null)
+            return false;
+
+        switch (action){
+            case MotionEvent.ACTION_DOWN:
+                mOnKeyDownListener.onKeyDown(keyCode);
+                break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                mOnKeyUpListener.onKeyUp(keyCode);
+                break;
+        }
+
+        return true;
+    }
+
+    public boolean processJoystickEvent(MotionEvent event){
+        if (autoCloseTimer != null) autoCloseTimer.reschedule();
+        if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) ==
+                InputDevice.SOURCE_JOYSTICK &&
+                event.getAction() == MotionEvent.ACTION_MOVE) {
+
+            float x = getJoystickX(event);
+            float y = getJoystickY(event);
+
+            return applyJoystickMovement(event.getAction(), x, y);
+        }
+
+        return false;
     }
 
     public void setOnKeyDownListener(OnKeyDownListener onKeyDownListener){

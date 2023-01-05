@@ -20,6 +20,7 @@ import cyou.joiplay.commons.model.Game;
 import cyou.joiplay.commons.model.GamePad;
 import cyou.joiplay.commons.parser.GamePadParser;
 import cyou.joiplay.joipad.R;
+import cyou.joiplay.joipad.view.KeyCodeSpinner;
 
 public class SettingsDialog{
     private static final String TAG = "SettingsDialog";
@@ -27,19 +28,6 @@ public class SettingsDialog{
     private GamePad mGamePad;
     private Game mGame;
     private Dialog mDialog;
-
-    private Integer mOpacity;
-    private Integer mScale;
-    private Integer mLKey;
-    private Integer mRKey;
-    private Integer mCLKey;
-    private Integer mCRKey;
-    private Integer mXKey;
-    private Integer mYKey;
-    private Integer mZKey;
-    private Integer mAKey;
-    private Integer mBKey;
-    private Integer mCKey;
 
     public interface OnSettingsChanged{
         void onSettingsChanged(GamePad gamePad);
@@ -52,19 +40,6 @@ public class SettingsDialog{
         mGamePad = gamePad;
         mGame = game;
 
-        mOpacity = gamePad.btnOpacity;
-        mScale = gamePad.btnScale;
-        mLKey = gamePad.lKeyCode;
-        mRKey = gamePad.rKeyCode;
-        mCLKey = gamePad.clKeyCode;
-        mCRKey = gamePad.crKeyCode;
-        mXKey = gamePad.xKeyCode;
-        mYKey = gamePad.yKeyCode;
-        mZKey = gamePad.zKeyCode;
-        mAKey = gamePad.aKeyCode;
-        mBKey = gamePad.bKeyCode;
-        mCKey = gamePad.cKeyCode;
-
         init();
     }
 
@@ -76,75 +51,67 @@ public class SettingsDialog{
 
         Spinner opacitySpinner = mDialog.findViewById(R.id.opacitySpinner);
         Spinner sizeSpinner = mDialog.findViewById(R.id.sizeSpinner);
-        Spinner leftSpinner = mDialog.findViewById(R.id.leftSpinner);
-        Spinner rightSpinner = mDialog.findViewById(R.id.rightSpinner);
-        Spinner cleftSpinner = mDialog.findViewById(R.id.cleftSpinner);
-        Spinner crightSpinner = mDialog.findViewById(R.id.crightSpinner);
-        Spinner firstSpinner = mDialog.findViewById(R.id.firstSpinner);
-        Spinner secondSpinner = mDialog.findViewById(R.id.secondSpinner);
-        Spinner thirdSpinner = mDialog.findViewById(R.id.thirdSpinner);
-        Spinner fourthSpinner = mDialog.findViewById(R.id.fourthSpinner);
-        Spinner fifthSpinner = mDialog.findViewById(R.id.fifthSpinner);
-        Spinner sixthSpinner = mDialog.findViewById(R.id.sixthSpinner);
+        KeyCodeSpinner leftSpinner = mDialog.findViewById(R.id.leftSpinner);
+        KeyCodeSpinner rightSpinner = mDialog.findViewById(R.id.rightSpinner);
+        KeyCodeSpinner cleftSpinner = mDialog.findViewById(R.id.cleftSpinner);
+        KeyCodeSpinner crightSpinner = mDialog.findViewById(R.id.crightSpinner);
+        KeyCodeSpinner firstSpinner = mDialog.findViewById(R.id.firstSpinner);
+        KeyCodeSpinner secondSpinner = mDialog.findViewById(R.id.secondSpinner);
+        KeyCodeSpinner thirdSpinner = mDialog.findViewById(R.id.thirdSpinner);
+        KeyCodeSpinner fourthSpinner = mDialog.findViewById(R.id.fourthSpinner);
+        KeyCodeSpinner fifthSpinner = mDialog.findViewById(R.id.fifthSpinner);
+        KeyCodeSpinner sixthSpinner = mDialog.findViewById(R.id.sixthSpinner);
+        KeyCodeSpinner leftSpinner1 = mDialog.findViewById(R.id.leftSpinner1);
+        KeyCodeSpinner rightSpinner1 = mDialog.findViewById(R.id.rightSpinner1);
+        KeyCodeSpinner cleftSpinner1 = mDialog.findViewById(R.id.cleftSpinner1);
+        KeyCodeSpinner crightSpinner1 = mDialog.findViewById(R.id.crightSpinner1);
+        KeyCodeSpinner firstSpinner1 = mDialog.findViewById(R.id.firstSpinner1);
+        KeyCodeSpinner secondSpinner1 = mDialog.findViewById(R.id.secondSpinner1);
+        KeyCodeSpinner thirdSpinner1 = mDialog.findViewById(R.id.thirdSpinner1);
+        KeyCodeSpinner fourthSpinner1 = mDialog.findViewById(R.id.fourthSpinner1);
+        KeyCodeSpinner fifthSpinner1 = mDialog.findViewById(R.id.fifthSpinner1);
+        KeyCodeSpinner sixthSpinner1 = mDialog.findViewById(R.id.sixthSpinner1);
         Button saveButton = mDialog.findViewById(R.id.saveButton);
+
+        leftSpinner.setKey(mGamePad.lKeyCode[0]);
+        rightSpinner.setKey(mGamePad.rKeyCode[0]);
+        cleftSpinner.setKey(mGamePad.clKeyCode[0]);
+        crightSpinner.setKey(mGamePad.crKeyCode[0]);
+        firstSpinner.setKey(mGamePad.xKeyCode[0]);
+        secondSpinner.setKey(mGamePad.yKeyCode[0]);
+        thirdSpinner.setKey(mGamePad.zKeyCode[0]);
+        fourthSpinner.setKey(mGamePad.aKeyCode[0]);
+        fifthSpinner.setKey(mGamePad.bKeyCode[0]);
+        sixthSpinner.setKey(mGamePad.cKeyCode[0]);
+
+        leftSpinner1.setKey(mGamePad.lKeyCode[1]);
+        rightSpinner1.setKey(mGamePad.rKeyCode[1]);
+        cleftSpinner1.setKey(mGamePad.clKeyCode[1]);
+        crightSpinner1.setKey(mGamePad.crKeyCode[1]);
+        firstSpinner1.setKey(mGamePad.xKeyCode[1]);
+        secondSpinner1.setKey(mGamePad.yKeyCode[1]);
+        thirdSpinner1.setKey(mGamePad.zKeyCode[1]);
+        fourthSpinner1.setKey(mGamePad.aKeyCode[1]);
+        fifthSpinner1.setKey(mGamePad.bKeyCode[1]);
+        sixthSpinner1.setKey(mGamePad.cKeyCode[1]);
 
         ArrayAdapter<CharSequence> opacityAdapter = ArrayAdapter.createFromResource(mContext, R.array.opacity_array, R.layout.spinner_item);
         ArrayAdapter<CharSequence> sizeAdapter = ArrayAdapter.createFromResource(mContext, R.array.scale_array, R.layout.spinner_item);
-        ArrayAdapter<CharSequence> leftAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
-        ArrayAdapter<CharSequence> rightAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
-        ArrayAdapter<CharSequence> cleftAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
-        ArrayAdapter<CharSequence> crightAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
-        ArrayAdapter<CharSequence> firstAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
-        ArrayAdapter<CharSequence> secondAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
-        ArrayAdapter<CharSequence> thirdAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
-        ArrayAdapter<CharSequence> fourthAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
-        ArrayAdapter<CharSequence> fifthAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
-        ArrayAdapter<CharSequence> sixthAdapter = ArrayAdapter.createFromResource(mContext, R.array.key_array, R.layout.spinner_item);
 
         opacityAdapter.setDropDownViewResource(R.layout.spinner_item);
         sizeAdapter.setDropDownViewResource(R.layout.spinner_item);
-        leftAdapter.setDropDownViewResource(R.layout.spinner_item);
-        rightAdapter.setDropDownViewResource(R.layout.spinner_item);
-        cleftAdapter.setDropDownViewResource(R.layout.spinner_item);
-        crightAdapter.setDropDownViewResource(R.layout.spinner_item);
-        firstAdapter.setDropDownViewResource(R.layout.spinner_item);
-        secondAdapter.setDropDownViewResource(R.layout.spinner_item);
-        thirdAdapter.setDropDownViewResource(R.layout.spinner_item);
-        fourthAdapter.setDropDownViewResource(R.layout.spinner_item);
-        fifthAdapter.setDropDownViewResource(R.layout.spinner_item);
-        sixthAdapter.setDropDownViewResource(R.layout.spinner_item);
 
         opacitySpinner.setAdapter(opacityAdapter);
         sizeSpinner.setAdapter(sizeAdapter);
-        leftSpinner.setAdapter(leftAdapter);
-        rightSpinner.setAdapter(rightAdapter);
-        cleftSpinner.setAdapter(leftAdapter);
-        crightSpinner.setAdapter(rightAdapter);
-        firstSpinner.setAdapter(firstAdapter);
-        secondSpinner.setAdapter(secondAdapter);
-        thirdSpinner.setAdapter(thirdAdapter);
-        fourthSpinner.setAdapter(fourthAdapter);
-        fifthSpinner.setAdapter(fifthAdapter);
-        sixthSpinner.setAdapter(sixthAdapter);
 
-        opacitySpinner.setSelection(getPosition(mOpacity.toString(), opacityAdapter));
-        sizeSpinner.setSelection(getPosition(mScale.toString(), sizeAdapter));
-        leftSpinner.setSelection(getPosition(getKeyName(mLKey), leftAdapter));
-        rightSpinner.setSelection(getPosition(getKeyName(mRKey), rightAdapter));
-        cleftSpinner.setSelection(getPosition(getKeyName(mCLKey), cleftAdapter));
-        crightSpinner.setSelection(getPosition(getKeyName(mCRKey), crightAdapter));
-        firstSpinner.setSelection(getPosition(getKeyName(mXKey), firstAdapter));
-        secondSpinner.setSelection(getPosition(getKeyName(mYKey), secondAdapter));
-        thirdSpinner.setSelection(getPosition(getKeyName(mZKey), thirdAdapter));
-        fourthSpinner.setSelection(getPosition(getKeyName(mAKey), fourthAdapter));
-        fifthSpinner.setSelection(getPosition(getKeyName(mBKey), fifthAdapter));
-        sixthSpinner.setSelection(getPosition(getKeyName(mCKey), sixthAdapter));
+        opacitySpinner.setSelection(getPosition(mGamePad.btnOpacity.toString(), opacityAdapter));
+        sizeSpinner.setSelection(getPosition(mGamePad.btnScale.toString(), sizeAdapter));
 
         opacitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    mOpacity = Integer.parseInt((String) parent.getItemAtPosition(position));
+                    mGamePad.btnOpacity = Integer.parseInt((String) parent.getItemAtPosition(position));
                 } catch (Exception e){
                     Log.d(TAG, Log.getStackTraceString(e));
                 }
@@ -158,147 +125,7 @@ public class SettingsDialog{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    mScale = Integer.parseInt((String) parent.getItemAtPosition(position));
-                } catch (Exception e){
-                    Log.d(TAG, Log.getStackTraceString(e));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        leftSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mLKey = getKeyCode((String) parent.getItemAtPosition(position));
-                } catch (Exception e){
-                    Log.d(TAG, Log.getStackTraceString(e));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        rightSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mRKey = getKeyCode((String) parent.getItemAtPosition(position));
-                } catch (Exception e){
-                    Log.d(TAG, Log.getStackTraceString(e));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        cleftSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mCLKey = getKeyCode((String) parent.getItemAtPosition(position));
-                } catch (Exception e){
-                    Log.d(TAG, Log.getStackTraceString(e));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        crightSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mCRKey = getKeyCode((String) parent.getItemAtPosition(position));
-                } catch (Exception e){
-                    Log.d(TAG, Log.getStackTraceString(e));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        firstSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mXKey = getKeyCode((String) parent.getItemAtPosition(position));
-                } catch (Exception e){
-                    Log.d(TAG, Log.getStackTraceString(e));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        secondSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mYKey = getKeyCode((String) parent.getItemAtPosition(position));
-                } catch (Exception e){
-                    Log.d(TAG, Log.getStackTraceString(e));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        thirdSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mZKey = getKeyCode((String) parent.getItemAtPosition(position));
-                } catch (Exception e){
-                    Log.d(TAG, Log.getStackTraceString(e));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        fourthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mAKey = getKeyCode((String) parent.getItemAtPosition(position));
-                } catch (Exception e){
-                    Log.d(TAG, Log.getStackTraceString(e));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        fifthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mBKey = getKeyCode((String) parent.getItemAtPosition(position));
-                } catch (Exception e){
-                    Log.d(TAG, Log.getStackTraceString(e));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        sixthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    mCKey = getKeyCode((String) parent.getItemAtPosition(position));
+                    mGamePad.btnScale = Integer.parseInt((String) parent.getItemAtPosition(position));
                 } catch (Exception e){
                     Log.d(TAG, Log.getStackTraceString(e));
                 }
@@ -310,18 +137,18 @@ public class SettingsDialog{
 
         saveButton.setOnClickListener(v -> {
             GamePad gamePad = new GamePad();
-            gamePad.btnOpacity = mOpacity;
-            gamePad.btnScale = mScale;
-            gamePad.aKeyCode = mAKey;
-            gamePad.bKeyCode = mBKey;
-            gamePad.cKeyCode = mCKey;
-            gamePad.xKeyCode = mXKey;
-            gamePad.yKeyCode = mYKey;
-            gamePad.zKeyCode = mZKey;
-            gamePad.lKeyCode = mLKey;
-            gamePad.rKeyCode = mRKey;
-            gamePad.clKeyCode = mCLKey;
-            gamePad.crKeyCode = mCRKey;
+            gamePad.btnOpacity = mGamePad.btnOpacity;
+            gamePad.btnScale = mGamePad.btnScale;
+            gamePad.aKeyCode = new Integer[]{fourthSpinner.getKey(), fourthSpinner1.getKey()};
+            gamePad.bKeyCode = new Integer[]{fifthSpinner.getKey(), fifthSpinner1.getKey()};
+            gamePad.cKeyCode = new Integer[]{sixthSpinner.getKey(), sixthSpinner1.getKey()};
+            gamePad.xKeyCode = new Integer[]{firstSpinner.getKey(), firstSpinner1.getKey()};
+            gamePad.yKeyCode = new Integer[]{secondSpinner.getKey(), secondSpinner1.getKey()};
+            gamePad.zKeyCode = new Integer[]{thirdSpinner.getKey(), thirdSpinner1.getKey()};
+            gamePad.lKeyCode = new Integer[]{leftSpinner.getKey(), leftSpinner1.getKey()};
+            gamePad.rKeyCode = new Integer[]{rightSpinner.getKey(), rightSpinner1.getKey()};
+            gamePad.clKeyCode = new Integer[]{cleftSpinner.getKey(), cleftSpinner1.getKey()};
+            gamePad.crKeyCode = new Integer[]{crightSpinner.getKey(), crightSpinner1.getKey()};
 
             try{
                 String configPath;
@@ -359,14 +186,6 @@ public class SettingsDialog{
 
     public void setOnSettingsChanged(OnSettingsChanged onSettingsChanged){
         mOnSettingsChanged = onSettingsChanged;
-    }
-
-    Integer getKeyCode(String keyString){
-        return KeyEvent.keyCodeFromString("KEYCODE_"+keyString);
-    }
-
-    String getKeyName(Integer keyCode){
-        return KeyEvent.keyCodeToString(keyCode).replace("KEYCODE_","");
     }
 
     int getPosition(String value, ArrayAdapter<CharSequence> arrayAdapter){

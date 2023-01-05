@@ -4,28 +4,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.widget.ImageView;
 
-public class GamePadDPad extends ImageView {
-    enum Direction{
-        UP,
-        UP_RIGHT,
-        RIGHT,
-        DOWN_RIGHT,
-        DOWN,
-        DOWN_LEFT,
-        LEFT,
-        UP_LEFT,
-        UNKNOWN
-    }
+import cyou.joiplay.joipad.util.DirectionUtils;
+import cyou.joiplay.joipad.util.DirectionUtils.Direction;
 
-    public interface OnKeyDownListener{
-        void onKeyDown(int key);
-    }
-
-    public interface OnKeyUpListener{
-        void onKeyUp(int key);
-    }
+public class GamePadDPad extends GamePadButton {
 
     private OnKeyDownListener mOnKeyDownListener = key -> {};
 
@@ -76,7 +59,7 @@ public class GamePadDPad extends ImageView {
             case MotionEvent.ACTION_POINTER_DOWN:
                 posX = event.getX();
                 posY = event.getY();
-                nAngle = getAngle(initX,posX,initY,posY);
+                nAngle = DirectionUtils.getAngle(initX,posX,initY,posY,isDiagonal);
                 if (angle == nAngle){
                     return false;
                 } else {
@@ -183,64 +166,9 @@ public class GamePadDPad extends ImageView {
                         break;
                 }
                 angle = Direction.UNKNOWN;
+                break;
         }
 
         return true;
-    }
-
-    private Direction getDir(double angle) {
-        if (isDiagonal){
-            return get8dir(angle);
-        } else {
-            return get4dir(angle);
-        }
-    }
-
-    private Direction get4dir(double angle)  {
-        if ((angle > 45) && (angle < 136)){
-            return Direction.UP;
-        } else if ((angle > 135) && (angle < 226)){
-            return Direction.RIGHT;
-        } else if ((angle > 225) && (angle < 316)){
-            return Direction.DOWN;
-        } else if (((angle >= 0) && (angle < 46)) || ((angle > 315) && (angle <361))){
-            return Direction.LEFT;
-        } else {
-            return Direction.UNKNOWN;
-        }
-    }
-
-    private Direction get8dir(double angle)  {
-        if ((angle >= 67.5) && (angle < 113.5)){
-            return Direction.UP;
-        } else if ((angle >= 113.5) && (angle < 158.5)){
-            return Direction.UP_RIGHT;
-        } else if ((angle >= 158.5) && (angle < 203.5)){
-            return Direction.RIGHT;
-        } else if ((angle >= 203.5) && (angle < 248.5)){
-            return Direction.DOWN_RIGHT;
-        } else if ((angle >= 248.5) && (angle < 293.5)){
-            return Direction.DOWN;
-        } else if ((angle >= 293.5) && (angle < 338.5)){
-            return Direction.DOWN_LEFT;
-        } else if (((angle >= 0) && (angle < 23.5)) || ((angle >= 338.5) && (angle <361))){
-            return Direction.LEFT;
-        } else if ((angle >= 23.5) && (angle < 67.5)){
-            return Direction.UP_LEFT;
-        } else {
-            return Direction.UNKNOWN;
-        }
-    }
-
-    private Direction getAngle(float initX, float posX, float initY, float posY){
-        double angle = 0;
-        try{
-            angle = Math.toDegrees(Math.atan2((initY - posY), (initX - posX)));
-        } catch (Exception e){}
-
-        if (angle < 0)
-            angle += 360;
-
-        return getDir(angle);
     }
 }

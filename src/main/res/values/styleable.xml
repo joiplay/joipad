@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GamePadButton">
+        <attr name="gp_variant" format="enum">
+            <enum name="gp_action" value="2"/>
+            <enum name="gp_gamepad" value="3"/>
+        </attr>
+        <attr name="gp_backgroundDrawable" format="reference"/>
+        <attr name="gp_foregroundText" format="string"/>
+        <attr name="gp_foregroundDrawable" format="reference"/>
+        <attr name="gp_backgroundTint" format="integer"/>
+        <attr name="gp_foregroundTint" format="integer"/>
+    </declare-styleable>
+</resources>

@@ -21,4 +21,6 @@
     <string name="save">Kaydet</string>
     <string name="cleft_button">Sol Mini Buton</string>
     <string name="cright_button">Sağ Mini Buton</string>
+    <string name="first_set">Ana</string>
+    <string name="second_set">Alternatif</string>
 </resources>

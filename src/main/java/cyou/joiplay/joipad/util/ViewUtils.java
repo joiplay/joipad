@@ -1,6 +1,8 @@
 package cyou.joiplay.joipad.util;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +13,17 @@ import android.widget.ImageView;
 import java.lang.reflect.Field;
 
 import cyou.joiplay.joipad.R;
+import cyou.joiplay.joipad.view.GamePadButton;
 
 public class ViewUtils {
     static public void changeOpacity(ViewGroup viewGroup, int opacity){
         for (int i=0; viewGroup.getChildCount() > i; i++){
             View view = viewGroup.getChildAt(i);
-            if ((view instanceof Button) || (view instanceof ImageView)){
+            if (view instanceof Button){
                 view.getBackground().setAlpha(Math.round(opacity*2.25f));
                 view.setAlpha(((opacity + 20) / 100f)*2);
+            } else if(view instanceof GamePadButton){
+                ((GamePadButton) view).setImageAlpha(Math.round(Math.min(opacity+20, 100)*2.55f));
             } else if (view instanceof ViewGroup){
                 changeOpacity((ViewGroup) view, opacity);
             }
@@ -65,33 +70,61 @@ public class ViewUtils {
         X,
         Y
     }
-    static public boolean onMoveView(View view, MotionEvent motionEvent, float[] vector, GridMovement grid){
+
+
+    public static class MovementData{
+        public long downTime = 0L;
+        public float x0 = 0;
+        public float y0 = 0;
+        public float x1 = 0;
+        public float y1 = 0;
+    }
+
+    static public boolean onMoveView(View view, MotionEvent motionEvent, MovementData movementData, GridMovement grid, int slope){
+        long longTime = 500L;
         switch (motionEvent.getAction()){
             case MotionEvent.ACTION_DOWN:
-                vector[0] = view.getX() - motionEvent.getRawX();
-                vector[1] = view.getY() - motionEvent.getRawY();
+                movementData.downTime = System.currentTimeMillis();
+                movementData.x0 = view.getX();
+                movementData.y0 = view.getY();
+
+                movementData.x1 = view.getX() - motionEvent.getRawX();
+                movementData.y1 = view.getY() - motionEvent.getRawY();
                 break;
             case MotionEvent.ACTION_MOVE:
                 switch (grid){
                     case X:
-                        view.animate()
-                                .x(motionEvent.getRawX() + vector[0] - (view.getWidth() / 2f))
-                                .setDuration(0)
-                                .start();
+                        if (Math.abs(movementData.x1) > slope)
+                            view.animate()
+                                    .x(motionEvent.getRawX() + movementData.x1 - (view.getWidth() / 2f))
+                                    .setDuration(0)
+                                    .start();
                         break;
                     case Y:
-                        view.animate()
-                                .y(motionEvent.getRawY() + vector[1] - (view.getHeight() / 2f))
-                                .setDuration(0)
-                                .start();
+                        if (Math.abs(movementData.y1) > slope)
+                            view.animate()
+                                    .y(motionEvent.getRawY() + movementData.y1 - (view.getHeight() / 2f))
+                                    .setDuration(0)
+                                    .start();
                         break;
                     case XY:
-                        view.animate()
-                                .x(motionEvent.getRawX() + vector[0] - (view.getWidth() / 2f))
-                                .y(motionEvent.getRawY() + vector[1] - (view.getHeight() / 2f))
-                                .setDuration(0)
-                                .start();
+                        if (Math.abs(movementData.x1) > slope || Math.abs(movementData.y1) > slope)
+                            view.animate()
+                                    .x(motionEvent.getRawX() + movementData.x1 - (view.getWidth() / 2f))
+                                    .y(motionEvent.getRawY() + movementData.y1 - (view.getHeight() / 2f))
+                                    .setDuration(0)
+                                    .start();
                         break;
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                if (System.currentTimeMillis() - movementData.downTime < longTime){
+                    view.animate()
+                            .x(movementData.x0)
+                            .y(movementData.y0)
+                            .setDuration(0)
+                            .start();
                 }
                 break;
             default:

@@ -20,6 +20,8 @@
     <string name="fifth_button">Fifth Button</string>
     <string name="sixth_button">Sixth Button</string>
     <string name="save">Save</string>
+    <string name="first_set">Main</string>
+    <string name="second_set">Alternative</string>
 
     <string-array name="key_array">
         <item>0</item>

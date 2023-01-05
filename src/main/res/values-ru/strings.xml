@@ -21,4 +21,6 @@
     <string name="save">Сохранить</string>
     <string name="cleft_button">Левая мини-кнопка</string>
     <string name="cright_button">Правая мини-кнопка</string>
+    <string name="first_set">Главный</string>
+    <string name="second_set">Альтернатива</string>
 </resources>

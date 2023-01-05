@@ -21,4 +21,6 @@
     <string name="save">Guardar</string>
     <string name="cleft_button">Mini botón izquierdo</string>
     <string name="cright_button">Mini botón derecho</string>
+    <string name="first_set">Principal</string>
+    <string name="second_set">Alternativa</string>
 </resources>

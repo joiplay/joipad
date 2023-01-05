@@ -21,4 +21,6 @@
     <string name="save">Cứu</string>
     <string name="cleft_button">Nút trái nhỏ</string>
     <string name="cright_button">Nút mini phải</string>
+    <string name="first_set">Chủ yếu</string>
+    <string name="second_set">Thay thế</string>
 </resources>

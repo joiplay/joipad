@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android">
     <translate
-            android:fromXDelta="0%"
-            android:toXDelta="-2%"
-            android:fromYDelta="0%"
-            android:toYDelta="-2%"
+        android:fromXDelta="0%"
+        android:toXDelta="-2%"
+        android:fromYDelta="0%"
+        android:toYDelta="-2%"
         />
     <translate
-            android:fromXDelta="-2%"
-            android:toXDelta="0%"
-            android:fromYDelta="-2%"
-            android:toYDelta="0%"
+        android:fromXDelta="-2%"
+        android:toXDelta="0%"
+        android:fromYDelta="-2%"
+        android:toYDelta="0%"
         />
 </set>

@@ -18,7 +18,9 @@
     <string name="fourth_button">第四个按钮</string>
     <string name="fifth_button">第五个按钮</string>
     <string name="sixth_button">第六个按钮</string>
-    <string name="save">节省</string>
+    <string name="save">保存</string>
     <string name="cleft_button">左迷你按钮</string>
     <string name="cright_button">右迷你按钮</string>
+    <string name="first_set">主要</string>
+    <string name="second_set">选择</string>
 </resources>
